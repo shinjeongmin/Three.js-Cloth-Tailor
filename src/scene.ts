@@ -16,6 +16,7 @@ import './style.css'
 import {initScene} from './render-setting'
 import * as controls from './controls'
 import * as debug from './debug-gui'
+import * as loader from './loader'
 
 const CANVAS_ID = 'scene'
 let ambientLight: AmbientLight
@@ -25,14 +26,14 @@ let clock: Clock
 let stats: Stats
 
 const {scene, canvas, renderer} = initScene(CANVAS_ID);
-const camera = new PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 100)
+const camera = new PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 1000)
 camera.position.set(2, 2, 5)
 const {cameraControls} = controls.setCameraControl(camera, canvas)
 
-init()
+await init()
 animate()
 
-function init() {
+async function init() {
   // ===== 💡 LIGHTS =====
   {
     ambientLight = new AmbientLight('white', 0.4)
@@ -74,9 +75,15 @@ function init() {
     plane.rotateX(Math.PI / 2)
     plane.receiveShadow = true
 
-    scene.add(cube)
+    // scene.add(cube)
     scene.add(plane)
   }
+
+  // model load
+  const bunnyObj = await loader.loadOBJ('Stanford_Bunny.obj')
+  bunnyObj.scale.set(0.01,0.01,0.01)
+  bunnyObj.position.set(0,.5,0)
+  scene.add(bunnyObj)
 
   // ===== 📈 STATS & CLOCK =====
   {

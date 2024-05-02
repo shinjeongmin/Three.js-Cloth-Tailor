@@ -9,7 +9,6 @@ export function setCameraControl
   const cameraControls = new OrbitControls(camera, canvas)
   cameraControls.enableDamping = true
   cameraControls.autoRotate = false
-  console.log(cameraControls.mouseButtons)
   cameraControls.mouseButtons.RIGHT = 1;
   cameraControls.mouseButtons.MIDDLE = 2;
   cameraControls.update()
