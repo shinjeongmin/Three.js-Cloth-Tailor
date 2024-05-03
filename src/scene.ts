@@ -2,6 +2,7 @@ import {
   AmbientLight,
   BoxGeometry,
   Clock,
+  Material,
   Mesh,
   MeshLambertMaterial,
   MeshStandardMaterial,
@@ -80,9 +81,17 @@ async function init() {
   }
 
   // model load
-  const bunnyObj = await loader.loadOBJ('Stanford_Bunny.obj')
+  const objPath = 'Stanford_Bunny.obj'
+  // const objPath = 'cloth.obj'
+  const bunnyObj = await loader.loadOBJ(objPath)
   bunnyObj.scale.set(0.01,0.01,0.01)
   bunnyObj.position.set(0,.5,0)
+  bunnyObj.traverse((ele)=>{
+    if(ele instanceof Mesh){
+      ele.material = new MeshStandardMaterial({color: 'red', side: 2})
+    }
+  })
+  // bunnyObj.children[0].side = FrontSide
   scene.add(bunnyObj)
 
   // ===== 📈 STATS & CLOCK =====
