@@ -11,13 +11,13 @@ import {
   PointLight,
 } from 'three'
 import Stats from 'three/examples/jsm/libs/stats.module'
-import * as animations from './helpers/animations'
-import { resizeRendererToDisplaySize } from './helpers/responsiveness'
-import './style.css'
-import {initScene} from './render-setting'
-import * as controls from './controls'
-import * as debug from './debug-gui'
-import * as loader from './loader'
+import * as animations from '../tween-animation'
+import { resizeRendererToDisplaySize } from '../canvas-window/responsiveness'
+import '../style.css'
+import {initScene} from '../canvas-window/render-setting'
+import * as controls from '../controls'
+import * as debug from '../debug/debug-gui'
+import * as loader from '../loader'
 
 const CANVAS_ID = 'scene'
 let ambientLight: AmbientLight
@@ -81,18 +81,15 @@ async function init() {
   }
 
   // model load
-  const objPath = 'Stanford_Bunny.obj'
-  // const objPath = 'cloth.obj'
-  const bunnyObj = await loader.loadOBJ(objPath)
-  bunnyObj.scale.set(0.01,0.01,0.01)
-  bunnyObj.position.set(0,.5,0)
-  bunnyObj.traverse((ele)=>{
+  const objPath = 'cloth.obj'
+  const clothObject = await loader.loadOBJ(objPath)
+  clothObject.position.set(0,1,0)
+  clothObject.traverse((ele)=>{
     if(ele instanceof Mesh){
-      ele.material = new MeshStandardMaterial({color: 'red', side: 2})
+      ele.material = new MeshStandardMaterial({color: 'red', side: 1})
     }
   })
-  // bunnyObj.children[0].side = FrontSide
-  scene.add(bunnyObj)
+  scene.add(clothObject)
 
   // ===== 📈 STATS & CLOCK =====
   {

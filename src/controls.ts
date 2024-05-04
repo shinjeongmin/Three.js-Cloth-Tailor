@@ -1,6 +1,6 @@
 import { Camera } from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
-import { toggleFullScreen } from "./helpers/fullscreen"
+import { toggleFullScreen } from "./canvas-window/fullscreen"
 
 export function setCameraControl
   (camera: Camera, canvas: HTMLElement): {
@@ -9,8 +9,8 @@ export function setCameraControl
   const cameraControls = new OrbitControls(camera, canvas)
   cameraControls.enableDamping = true
   cameraControls.autoRotate = false
-  cameraControls.mouseButtons.RIGHT = 1;
-  cameraControls.mouseButtons.MIDDLE = 2;
+  cameraControls.mouseButtons.RIGHT = 1
+  cameraControls.mouseButtons.MIDDLE = 2
   cameraControls.update()
 
   return { cameraControls }
