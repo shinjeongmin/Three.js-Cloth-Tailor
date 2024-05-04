@@ -13,7 +13,7 @@ import {
 import Stats from 'three/examples/jsm/libs/stats.module'
 import * as animations from '../tween-animation'
 import { resizeRendererToDisplaySize } from '../canvas-window/responsiveness'
-import '../style.css'
+import '../style-sheets/style.css'
 import {initScene} from '../canvas-window/render-setting'
 import * as controls from '../controls'
 import * as debug from '../debug/debug-gui'
