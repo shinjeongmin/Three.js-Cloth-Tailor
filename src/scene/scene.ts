@@ -86,7 +86,7 @@ async function init() {
   clothObject.position.set(0,1,0)
   clothObject.traverse((ele)=>{
     if(ele instanceof Mesh){
-      ele.material = new MeshStandardMaterial({color: 'red', side: 1})
+      ele.material = new MeshStandardMaterial({color: 'red', side: 2})
     }
   })
   scene.add(clothObject)
