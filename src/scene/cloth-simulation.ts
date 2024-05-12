@@ -1,4 +1,4 @@
-import { AmbientLight, BoxGeometry, Mesh, MeshLambertMaterial, MeshStandardMaterial, PerspectiveCamera, PlaneGeometry, PointLight } from "three";
+import { AmbientLight, BoxGeometry, BufferAttribute, BufferGeometry, Mesh, MeshLambertMaterial, MeshStandardMaterial, PerspectiveCamera, PlaneGeometry, PointLight, RingGeometry } from "three";
 import { initScene } from "../canvas-window/render-setting";
 import * as controls from '../controls'
 import { resizeRendererToDisplaySize } from "../canvas-window/responsiveness";
@@ -40,6 +40,7 @@ async function init() {
 
   // model load
   const objPath = 'cloth.obj'
+  // const objPath = 'Stanford_Bunny.obj'
   const clothObject = await loader.loadOBJ(objPath)
   clothObject.position.set(0, 1, 0)
   clothObject.traverse((ele) => {
@@ -48,6 +49,10 @@ async function init() {
     }
   })
   scene.add(clothObject)
+
+  //test
+  const buffer = new BoxGeometry()
+  console.log(buffer)
 }
 
 function animate() {
