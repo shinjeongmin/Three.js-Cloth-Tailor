@@ -1,7 +1,7 @@
 import { Mesh } from "three";
-import ClothSelfCollision, { Collision } from "./Collision";
-import { Constraint, ConstraintFactory } from "./Constraint";
-import { Hash } from "./Hash";
+import ClothSelfCollision, { Collision } from "./collision";
+import { Constraint, ConstraintFactory } from "./constraint";
+import { Hash } from "./hash";
 import {
   vecAdd,
   vecCopy,

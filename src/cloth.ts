@@ -1,5 +1,5 @@
 import { Mesh } from "three";
-import { ClothPhysicsObject } from "./PBD-simulation/PhysicsObject";
+import { ClothPhysicsObject } from "./PBD-simulation/physics-object";
 
 /**
  * Cloth that hangs (like from a clothesline)
