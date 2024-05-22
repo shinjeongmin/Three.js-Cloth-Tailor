@@ -1,4 +1,4 @@
-import { AmbientLight, BoxGeometry, BufferAttribute, BufferGeometry, Euler, Group, Material, Mesh, MeshBasicMaterial, MeshLambertMaterial, MeshStandardMaterial, PerspectiveCamera, PlaneGeometry, PointLight, RingGeometry, Scene, SphereGeometry, Vector3 } from "three"
+import { AmbientLight, BoxGeometry, BufferAttribute, BufferGeometry, DirectionalLight, Euler, Group, Material, Mesh, MeshBasicMaterial, MeshLambertMaterial, MeshStandardMaterial, PerspectiveCamera, PlaneGeometry, PointLight, RingGeometry, Scene, SphereGeometry, Vector3 } from "three"
 import { initScene } from "../canvas-window/render-setting"
 import * as controls from '../controls'
 import { resizeRendererToDisplaySize } from "../canvas-window/responsiveness"
@@ -8,11 +8,12 @@ import Cloth from "../cloth"
 
 const CANVAS_ID = 'scene'
 let ambientLight: AmbientLight
+let directionalLight: DirectionalLight
 
 // global variable
 const { scene, canvas, renderer } = initScene(CANVAS_ID)
 const camera = new PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 1000)
-camera.position.set(-0.5, 1, 0.2)
+camera.position.set(-2, 2.5, 1.5)
 const { cameraControls } = controls.setCameraControl(camera, canvas)
 
 let clothMesh: Mesh
@@ -32,6 +33,8 @@ async function init() {
   {
     ambientLight = new AmbientLight('white', 0.4)
     scene.add(ambientLight)
+    directionalLight = new DirectionalLight('white', 0.5)
+    scene.add(directionalLight)
   }
   const planeGeometry = new PlaneGeometry(3, 3)
   const planeMaterial = new MeshLambertMaterial({
@@ -52,8 +55,9 @@ async function init() {
   const objPath = 'cloth.obj'
   const file = await customOBJLoader.load(objPath)
   clothMesh = customOBJLoader.parse(file)
-  clothMesh.material = new MeshStandardMaterial({ color: 'red', wireframe: true})
+  clothMesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
   scene.add(clothMesh)
+  clothMesh.position.set(0,0.5,0)
 
   /* threejs obj loader
   clothMesh = await loadOBJ(objPath)
@@ -99,19 +103,16 @@ function physicsSimulation(){
 
   cloth.updateVertexNormals()
 
-  // if(clothMesh.children[0] instanceof Mesh)
-  //   if(clothMesh.children[0].geometry instanceof BufferGeometry)
-  //     clothMesh.children[0].geometry.setAttribute(
-  //   'position', 
-  //   new BufferAttribute(new Float32Array(cloth.positions), cloth.positions.length)
-  // )
+  // apply vertex position
+  clothMesh.geometry.setAttribute('position', new BufferAttribute(new Float32Array(cloth.positions), 3))
+  clothMesh.geometry.setAttribute('normal', new BufferAttribute(new Float32Array(cloth.normals), 3))  
 }
 
 async function animate() {
   await requestAnimationFrame(animate)
 
   //#region simulation
-  // physicsSimulation()
+  physicsSimulation()
   //#endregion
 
   if (resizeRendererToDisplaySize(renderer)) {
