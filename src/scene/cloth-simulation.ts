@@ -62,27 +62,20 @@ async function init() {
   const childMesh = clothMesh.children[0]
   const idx = 0
   if(childMesh instanceof Mesh){
-    childMesh.geometry.getAttribute('position').setY(idx, childMesh.geometry.getAttribute('position').getY(idx) - 0.1)
-    console.log(childMesh.geometry.getAttribute('position').getX(idx))
+    // childMesh.geometry.getAttribute('position').setY(idx, childMesh.geometry.getAttribute('position').getY(idx) - 0.1)
   }
   viewPoint(childMesh as Mesh, idx, scene)
 
-  // if(clothMesh.children[0] instanceof Mesh){
-  //   if(clothMesh.children[0].geometry instanceof BufferGeometry){
-  //     clothMesh.children[0].geometry.getAttribute('position').needsUpdate = true
-  //     clothMesh.children[0].geometry.getAttribute('normal').needsUpdate = true
-  //     clothMesh.children[0].geometry.getAttribute('uv').needsUpdate = true
-  //   }
-  // }
-
   // physics object
-  // if(clothMesh.children[0] instanceof Mesh)
-    // cloth = new Cloth(clothMesh.children[0], thickness)
+  if(clothMesh.children[0] instanceof Mesh)
+    cloth = new Cloth(clothMesh.children[0], thickness)
   
-  // cloth.registerDistanceConstraint(0.0)
-  // cloth.registerPerformantBendingConstraint(1.0)
-  // cloth.registerSelfCollision()
+  cloth.registerDistanceConstraint(0.0)
+  cloth.registerPerformantBendingConstraint(1.0)
+  cloth.registerSelfCollision()
   // cloth.registerIsometricBendingConstraint(10.0)
+
+  console.log(cloth)
 }
 
 async function physicsSimulation(){
@@ -123,7 +116,6 @@ async function animate() {
 
   document.addEventListener("keydown", function(event){
     if(event.key == ' '){
-      console.log(camera.rotation)
     }
   },false)
 }
