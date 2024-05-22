@@ -2,7 +2,7 @@ import { AmbientLight, BoxGeometry, BufferAttribute, BufferGeometry, Euler, Grou
 import { initScene } from "../canvas-window/render-setting"
 import * as controls from '../controls'
 import { resizeRendererToDisplaySize } from "../canvas-window/responsiveness"
-import * as loader from '../loader'
+import CustomOBJLoader, { loadOBJ } from '../loader'
 import '../style-sheets/style.css'
 import Cloth from "../cloth"
 
@@ -15,8 +15,9 @@ const camera = new PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeigh
 camera.position.set(-0.5, 1, 0.2)
 const { cameraControls } = controls.setCameraControl(camera, canvas)
 
-let clothMesh: Group
+let clothMesh: Mesh
 let cloth:Cloth
+const customOBJLoader = new CustomOBJLoader()
 const thickness: number = 0.05
 const dt = 1.0 / 60.0
 const steps = 10
@@ -49,7 +50,13 @@ async function init() {
 
   // model load
   const objPath = 'cloth.obj'
-  clothMesh = await loader.loadOBJ(objPath)
+  const file = await customOBJLoader.load(objPath)
+  clothMesh = customOBJLoader.parse(file)
+  clothMesh.material = new MeshStandardMaterial({ color: 'red', wireframe: true})
+  scene.add(clothMesh)
+
+  /* threejs obj loader
+  clothMesh = await loadOBJ(objPath)
   clothMesh.position.set(0, 1, 0)
   clothMesh.scale.set(0.5,0.5,0.5)
   clothMesh.traverse((ele) => {
@@ -63,22 +70,25 @@ async function init() {
   const idx = 0
   if(childMesh instanceof Mesh){
     // childMesh.geometry.getAttribute('position').setY(idx, childMesh.geometry.getAttribute('position').getY(idx) - 0.1)
+    console.log(childMesh)
   }
   viewPoint(childMesh as Mesh, idx, scene)
+  
 
   // physics object
   if(clothMesh.children[0] instanceof Mesh)
     cloth = new Cloth(clothMesh.children[0], thickness)
+  */
   
+  cloth = new Cloth(clothMesh, thickness)
+
   cloth.registerDistanceConstraint(0.0)
   cloth.registerPerformantBendingConstraint(1.0)
   cloth.registerSelfCollision()
   // cloth.registerIsometricBendingConstraint(10.0)
-
-  console.log(cloth)
 }
 
-async function physicsSimulation(){
+function physicsSimulation(){
   gravity[2] = Math.cos(Date.now() / 2000) * 15.5
   cloth.preIntegration(sdt)
   for (let i = 0; i < steps; i++) {
@@ -101,7 +111,7 @@ async function animate() {
   await requestAnimationFrame(animate)
 
   //#region simulation
-  // await physicsSimulation()
+  // physicsSimulation()
   //#endregion
 
   if (resizeRendererToDisplaySize(renderer)) {
@@ -126,7 +136,7 @@ function viewPoint(mesh: Mesh, index: number, scene: Scene){
       mesh.geometry.getAttribute('position').getY(index),
       mesh.geometry.getAttribute('position').getZ(index)
   ))
-  const point = new Mesh(new SphereGeometry(0.001), new MeshBasicMaterial({color: 'green', transparent: false}))
+  const point = new Mesh(new SphereGeometry(0.01), new MeshBasicMaterial({color: 'green', transparent: false}))
   point.position.set(pos.x,pos.y,pos.z)
   scene.add(point)
 }

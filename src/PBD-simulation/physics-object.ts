@@ -29,7 +29,7 @@ export default abstract class PhysicsObject {
   collisions: Collision[];
 
   constructor(mesh: Mesh) {
-    this.numParticles = mesh.geometry.attributes.position.count;
+    this.numParticles = mesh.geometry.attributes.position.itemSize;
     this.positions = new Float32Array(mesh.geometry.attributes.position.array);
     this.normals = new Float32Array(mesh.geometry.attributes.normal.array);
     this.prevPositions = new Float32Array(mesh.geometry.attributes.position.array);
