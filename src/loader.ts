@@ -1,4 +1,4 @@
-import { BufferAttribute, Group, Mesh, Object3DEventMap, TorusGeometry } from 'three'
+import { BufferAttribute, BufferGeometry, Group, Mesh, Object3DEventMap, TorusGeometry } from 'three'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
@@ -30,16 +30,16 @@ type toBeFloat32 = number;
 type toBeUInt16 = number;
 
 export default class CustomOBJLoader {
-  mesh = new Mesh();
+  mesh = new Mesh()
   constructor() {}
   async load(filePath: FilePath): Promise<ObjFile> {
-    const resp = await fetch(filePath);
+    let resp = await fetch(filePath);
     if (!resp.ok) {
       throw new Error(
         `CustomOBJLoader could not fine file at ${filePath}. Please check your path.`
       );
     }
-    const file = await resp.text();
+    let file = await resp.text();
 
     if (file.length === 0) {
       throw new Error(`${filePath} File is empty.`);
@@ -125,12 +125,13 @@ export default class CustomOBJLoader {
       }
     }
 
-
-    this.mesh.geometry.setAttribute('position', new BufferAttribute(new Float32Array(finalPosition), 3))
-    this.mesh.geometry.setAttribute('uv', new BufferAttribute(new Float32Array(finalUvs), 2))
-    this.mesh.geometry.setAttribute('normal', new BufferAttribute(new Float32Array(finalNormals), 3))
-    this.mesh.geometry.index = new BufferAttribute(new Uint16Array(finalIndices), 1)
-    return this.mesh
+    const newGeometry = new BufferGeometry()
+    newGeometry.setAttribute('position', new BufferAttribute(new Float32Array(finalPosition), 3))
+    newGeometry.setAttribute('uv', new BufferAttribute(new Float32Array(finalUvs), 2))
+    newGeometry.setAttribute('normal', new BufferAttribute(new Float32Array(finalNormals), 3))
+    newGeometry.index = new BufferAttribute(new Uint16Array(finalIndices), 1)
+    this.mesh.geometry = newGeometry
+    return this.mesh.clone()
 
     // return {
     //   positions: new Float32Array(finalPosition),

@@ -16,7 +16,9 @@ const camera = new PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeigh
 camera.position.set(-2, 2.5, 1.5)
 const { cameraControls } = controls.setCameraControl(camera, canvas)
 
-let clothMesh: Mesh
+let cloth40x40Mesh: Mesh
+let clothOnepieceMesh: Mesh
+let currentMesh: Mesh
 let cloth:Cloth
 const customOBJLoader = new CustomOBJLoader()
 const thickness: number = 0.05
@@ -52,14 +54,30 @@ async function init() {
   scene.add(plane)
 
   // model load
-  const objPath = 'cloth40x40.obj'
-  const file = await customOBJLoader.load(objPath)
-  clothMesh = customOBJLoader.parse(file)
-  clothMesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
-  scene.add(clothMesh)
-  clothMesh.position.set(0,0.5,0)
+  //#region cloth 40x40 object
+  let objPath = 'cloth40x40.obj'
+  let file = await customOBJLoader.load(objPath)
+  cloth40x40Mesh = customOBJLoader.parse(file)
+  cloth40x40Mesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
+  cloth40x40Mesh.position.set(0,0.5,0)
+  cloth40x40Mesh.scale.set(0.5,0.5,0.5)
+  //#endregion
+
+  //#region cloth onepiece object
+  objPath = 'onepiece.obj'
+  file = await customOBJLoader.load(objPath)
+  clothOnepieceMesh = customOBJLoader.parse(file)
+  clothOnepieceMesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
+  clothOnepieceMesh.position.set(0,0.5,0)
+  clothOnepieceMesh.scale.set(0.5,0.5,0.5)
+  //#endregion
+
+  // modify this code to change object model
+  // currentMesh = cloth40x40Mesh
+  currentMesh = clothOnepieceMesh
+  scene.add(currentMesh)
   
-  cloth = new Cloth(clothMesh, thickness)
+  cloth = new Cloth(currentMesh, thickness)
 
   cloth.registerDistanceConstraint(0.0)
   cloth.registerPerformantBendingConstraint(1.0)
@@ -79,8 +97,8 @@ function physicsSimulation(){
   cloth.updateVertexNormals()
 
   // apply vertex position
-  clothMesh.geometry.setAttribute('position', new BufferAttribute(new Float32Array(cloth.positions), 3))
-  clothMesh.geometry.setAttribute('normal', new BufferAttribute(new Float32Array(cloth.normals), 3))  
+  currentMesh.geometry.setAttribute('position', new BufferAttribute(new Float32Array(cloth.positions), 3))
+  currentMesh.geometry.setAttribute('normal', new BufferAttribute(new Float32Array(cloth.normals), 3))  
 }
 
 async function animate() {
