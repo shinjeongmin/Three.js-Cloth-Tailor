@@ -58,31 +58,6 @@ async function init() {
   clothMesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
   scene.add(clothMesh)
   clothMesh.position.set(0,0.5,0)
-
-  /* threejs obj loader
-  clothMesh = await loadOBJ(objPath)
-  clothMesh.position.set(0, 1, 0)
-  clothMesh.scale.set(0.5,0.5,0.5)
-  clothMesh.traverse((ele) => {
-    if (ele instanceof Mesh) {
-      ele.material = new MeshStandardMaterial({ color: 'red', wireframe: true})
-    }
-  })
-  scene.add(clothMesh)
-  
-  const childMesh = clothMesh.children[0]
-  const idx = 0
-  if(childMesh instanceof Mesh){
-    // childMesh.geometry.getAttribute('position').setY(idx, childMesh.geometry.getAttribute('position').getY(idx) - 0.1)
-    console.log(childMesh)
-  }
-  viewPoint(childMesh as Mesh, idx, scene)
-  
-
-  // physics object
-  if(clothMesh.children[0] instanceof Mesh)
-    cloth = new Cloth(clothMesh.children[0], thickness)
-  */
   
   cloth = new Cloth(clothMesh, thickness)
 
