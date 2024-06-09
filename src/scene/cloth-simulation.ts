@@ -52,7 +52,7 @@ async function init() {
   scene.add(plane)
 
   // model load
-  const objPath = 'cloth.obj'
+  const objPath = 'cloth40x40.obj'
   const file = await customOBJLoader.load(objPath)
   clothMesh = customOBJLoader.parse(file)
   clothMesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
