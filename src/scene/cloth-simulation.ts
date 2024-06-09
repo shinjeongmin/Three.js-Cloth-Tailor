@@ -68,7 +68,7 @@ async function init() {
   file = await customOBJLoader.load(objPath)
   clothOnepieceMesh = customOBJLoader.parse(file)
   clothOnepieceMesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
-  clothOnepieceMesh.position.set(0,0.5,0)
+  clothOnepieceMesh.position.set(0,1,0)
   clothOnepieceMesh.scale.set(0.5,0.5,0.5)
   //#endregion
 
