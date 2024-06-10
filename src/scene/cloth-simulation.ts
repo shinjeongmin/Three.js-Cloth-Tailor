@@ -27,6 +27,8 @@ const steps = 10
 const sdt = dt / steps
 const gravity = new Float32Array([-1.1, -9.8, 2.5])
 
+let stateStop:boolean = false
+
 await init()
 animate()
 
@@ -105,7 +107,7 @@ async function animate() {
   await requestAnimationFrame(animate)
 
   //#region simulation
-  physicsSimulation()
+  if(!stateStop) physicsSimulation()
   //#endregion
 
   if (resizeRendererToDisplaySize(renderer)) {
@@ -118,11 +120,15 @@ async function animate() {
 
   renderer.render(scene, camera)
 
-  document.addEventListener("keydown", function(event){
-    if(event.key == ' '){
-    }
-  },false)
 }
+
+// toggle stop simulation
+document.addEventListener("keydown", function(event){
+  if(event.key == ' '){
+    stateStop = !stateStop
+    console.log(stateStop)
+  }
+},false)
 
 function viewPoint(mesh: Mesh, index: number, scene: Scene){
   const pos = mesh.localToWorld(new Vector3(
