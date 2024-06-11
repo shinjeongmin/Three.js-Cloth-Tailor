@@ -1,5 +1,5 @@
 import GUI from 'lil-gui'
-import { AmbientLight, AxesHelper, GridHelper, Mesh, PointLight, PointLightHelper, Scene } from 'three'
+import { AmbientLight, AxesHelper, GridHelper, Mesh, MeshBasicMaterial, PointLight, PointLightHelper, Scene, SphereGeometry, Vector3 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 let axesHelper: AxesHelper
@@ -83,4 +83,42 @@ export function setDebug
   gui.add({ resetGui }, 'resetGui').name('RESET')
 
   gui.close()
+}
+
+export function vertexViewer(mesh: Mesh, scene: Scene){
+  let target = {
+    index: 0,
+    max : 300,
+  }
+  const point = new Mesh(new SphereGeometry(0.01), new MeshBasicMaterial({color: 'green', transparent: false}))
+
+  const updateVertexView = ()=>{
+    const pos = mesh.localToWorld(new Vector3(
+      mesh.geometry.getAttribute('position').getX(target.index),
+      mesh.geometry.getAttribute('position').getY(target.index),
+      mesh.geometry.getAttribute('position').getZ(target.index)
+    ))
+    point.position.set(pos.x,pos.y,pos.z)
+  }
+
+  const gui = new GUI({ title: '🐞 Debug GUI', width: 300 })
+  const targetOneFolder = gui.addFolder('target one')
+  const vertexIndexController = targetOneFolder.add(target, 'index').min(0).max(target.max).step(1).name('vertex index')
+  .onChange(updateVertexView)
+
+const increase = () => { 
+  if(target.index < target.max) target.index++ 
+  updateVertexView()
+  vertexIndexController.updateDisplay()
+}
+const decrease = () => { 
+  if(target.index > 0) target.index-- 
+  updateVertexView()
+  vertexIndexController.updateDisplay()
+}
+const obj = { increase, decrease } // 객체를 만들고 함수 r을 속성으로 추가
+targetOneFolder.add(obj, 'increase').name('increase')
+targetOneFolder.add(obj, 'decrease').name('decrease')
+
+  scene.add(point)
 }

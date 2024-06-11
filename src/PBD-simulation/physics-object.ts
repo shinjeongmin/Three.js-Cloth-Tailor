@@ -64,8 +64,6 @@ export default abstract class PhysicsObject {
         vecCopy(this.positions, i, this.prevPositions, i);
         this.positions[3 * i + 1] = height;
       }
-      if(i == 0)
-        console.log(this.positions[3*i+1])
     }
     for (const constraint of this.constraints) {
       constraint.solve(dt);

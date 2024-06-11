@@ -7,6 +7,7 @@ import '../style-sheets/style.css'
 import Cloth from "../cloth"
 import {initInputEvents} from '../managers/input-manager'
 import {stateStop} from '../managers/state-manager'
+import { setDebug, vertexViewer } from "../debug/debug-gui"
 
 const CANVAS_ID = 'scene'
 let ambientLight: AmbientLight
@@ -83,7 +84,7 @@ async function init() {
   clothOnepieceMesh.scale.set(0.5,0.5,0.5)
   //#endregion
 
-  //#region cubw object
+  //#region cube object
   objPath = 'cube.obj'
   file = await customOBJLoader.load(objPath)
   cubeMesh = customOBJLoader.parse(file)
@@ -107,6 +108,9 @@ async function init() {
 
   // set floor height
   cloth.setFloorHeight(-5)
+
+  // debugger
+  vertexViewer(currentMesh, scene)
 }
 
 function physicsSimulation(){
@@ -123,6 +127,7 @@ function physicsSimulation(){
   // apply vertex position
   currentMesh.geometry.setAttribute('position', new BufferAttribute(new Float32Array(cloth.positions), 3))
   currentMesh.geometry.setAttribute('normal', new BufferAttribute(new Float32Array(cloth.normals), 3))
+
 }
 
 async function animate() {
@@ -141,15 +146,4 @@ async function animate() {
   cameraControls.update()
 
   renderer.render(scene, camera)
-}
-
-function viewPoint(mesh: Mesh, index: number, scene: Scene){
-  const pos = mesh.localToWorld(new Vector3(
-      mesh.geometry.getAttribute('position').getX(index),
-      mesh.geometry.getAttribute('position').getY(index),
-      mesh.geometry.getAttribute('position').getZ(index)
-  ))
-  const point = new Mesh(new SphereGeometry(0.01), new MeshBasicMaterial({color: 'green', transparent: false}))
-  point.position.set(pos.x,pos.y,pos.z)
-  scene.add(point)
 }
