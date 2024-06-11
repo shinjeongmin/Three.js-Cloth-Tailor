@@ -76,7 +76,7 @@ async function init() {
     plane.rotateX(Math.PI / 2)
     plane.receiveShadow = true
 
-    // scene.add(cube)
+    scene.add(cube)
     scene.add(plane)
   }
 

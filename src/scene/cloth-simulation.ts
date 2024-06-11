@@ -60,7 +60,7 @@ async function init() {
   const plane = new Mesh(planeGeometry, planeMaterial)
   plane.rotateX(Math.PI / 2)
   plane.receiveShadow = true
-  plane.position.setY(floorHeight * 0.3)
+  plane.position.setY(floorHeight)
   console.log(plane.getWorldPosition(plane.position))
   console.log(plane.position)
 
