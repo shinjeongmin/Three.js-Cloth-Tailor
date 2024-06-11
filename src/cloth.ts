@@ -31,6 +31,7 @@ export default class Cloth extends ClothPhysicsObject {
       // Thickness of the edge to zero out(?)
       const eps = 0.000001;
 
+      return
       for (let i = 0; i < this.numParticles; i++) {
         const x = this.positions[3 * i];
         const y = this.positions[3 * i + 1];

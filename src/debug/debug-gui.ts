@@ -106,19 +106,19 @@ export function vertexViewer(mesh: Mesh, scene: Scene){
   const vertexIndexController = targetOneFolder.add(target, 'index').min(0).max(target.max).step(1).name('vertex index')
   .onChange(updateVertexView)
 
-const increase = () => { 
-  if(target.index < target.max) target.index++ 
-  updateVertexView()
-  vertexIndexController.updateDisplay()
-}
-const decrease = () => { 
-  if(target.index > 0) target.index-- 
-  updateVertexView()
-  vertexIndexController.updateDisplay()
-}
-const obj = { increase, decrease } // 객체를 만들고 함수 r을 속성으로 추가
-targetOneFolder.add(obj, 'increase').name('increase')
-targetOneFolder.add(obj, 'decrease').name('decrease')
+  const increase = () => { 
+    if(target.index < target.max) target.index++ 
+    updateVertexView()
+    vertexIndexController.updateDisplay()
+  }
+  const decrease = () => { 
+    if(target.index > 0) target.index-- 
+    updateVertexView()
+    vertexIndexController.updateDisplay()
+  }
+  const obj = { increase, decrease } // 객체를 만들고 함수 r을 속성으로 추가
+  targetOneFolder.add(obj, 'increase').name('increase')
+  targetOneFolder.add(obj, 'decrease').name('decrease')
 
   scene.add(point)
 }
