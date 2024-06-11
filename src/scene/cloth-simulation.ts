@@ -5,6 +5,8 @@ import { resizeRendererToDisplaySize } from "../canvas-window/responsiveness"
 import CustomOBJLoader, { loadOBJ } from '../loader'
 import '../style-sheets/style.css'
 import Cloth from "../cloth"
+import {initInputEvents} from '../managers/input-manager'
+import {stateStop} from '../managers/state-manager'
 
 const CANVAS_ID = 'scene'
 let ambientLight: AmbientLight
@@ -18,6 +20,7 @@ const { cameraControls } = controls.setCameraControl(camera, canvas)
 
 let cloth40x40Mesh: Mesh
 let clothOnepieceMesh: Mesh
+let cubeMesh: Mesh
 let currentMesh: Mesh
 let cloth:Cloth
 const customOBJLoader = new CustomOBJLoader()
@@ -27,12 +30,15 @@ const steps = 10
 const sdt = dt / steps
 const gravity = new Float32Array([-1.1, -9.8, 2.5])
 
-let stateStop:boolean = false
+const floorHeight = -5
 
 await init()
 animate()
 
 async function init() {
+  // ===== Managers =====
+  initInputEvents()
+
   // ===== 💡 LIGHTS =====
   {
     ambientLight = new AmbientLight('white', 0.4)
@@ -52,6 +58,9 @@ async function init() {
   const plane = new Mesh(planeGeometry, planeMaterial)
   plane.rotateX(Math.PI / 2)
   plane.receiveShadow = true
+  plane.position.setY(floorHeight * 0.3)
+  console.log(plane.getWorldPosition(plane.position))
+  console.log(plane.position)
 
   scene.add(plane)
 
@@ -74,9 +83,19 @@ async function init() {
   clothOnepieceMesh.scale.set(0.5,0.5,0.5)
   //#endregion
 
+  //#region cubw object
+  objPath = 'cube.obj'
+  file = await customOBJLoader.load(objPath)
+  cubeMesh = customOBJLoader.parse(file)
+  cubeMesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
+  cubeMesh.position.set(0,1,0)
+  cubeMesh.scale.set(0.5,0.5,0.5)
+  //#endregion
+
   // modify this code to change object model
   // currentMesh = cloth40x40Mesh
-  currentMesh = clothOnepieceMesh
+  // currentMesh = clothOnepieceMesh
+  currentMesh = cubeMesh
   scene.add(currentMesh)
   
   cloth = new Cloth(currentMesh, thickness)
@@ -85,6 +104,9 @@ async function init() {
   cloth.registerPerformantBendingConstraint(1.0)
   cloth.registerSelfCollision()
   // cloth.registerIsometricBendingConstraint(10.0)
+
+  // set floor height
+  cloth.setFloorHeight(-5)
 }
 
 function physicsSimulation(){
@@ -100,7 +122,7 @@ function physicsSimulation(){
 
   // apply vertex position
   currentMesh.geometry.setAttribute('position', new BufferAttribute(new Float32Array(cloth.positions), 3))
-  currentMesh.geometry.setAttribute('normal', new BufferAttribute(new Float32Array(cloth.normals), 3))  
+  currentMesh.geometry.setAttribute('normal', new BufferAttribute(new Float32Array(cloth.normals), 3))
 }
 
 async function animate() {
@@ -119,16 +141,7 @@ async function animate() {
   cameraControls.update()
 
   renderer.render(scene, camera)
-
 }
-
-// toggle stop simulation
-document.addEventListener("keydown", function(event){
-  if(event.key == ' '){
-    stateStop = !stateStop
-    console.log(stateStop)
-  }
-},false)
 
 function viewPoint(mesh: Mesh, index: number, scene: Scene){
   const pos = mesh.localToWorld(new Vector3(

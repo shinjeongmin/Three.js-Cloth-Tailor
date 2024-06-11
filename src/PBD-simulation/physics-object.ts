@@ -12,6 +12,8 @@ import {
   vecSetZero,
 } from "./math";
 
+let height = -0.7
+
 /**
  * Abstract class that all meshes should inherit from to use XPBD physics
  */
@@ -50,15 +52,20 @@ export default abstract class PhysicsObject {
     );
   }
 
+  setFloorHeight(_height:number){
+    height = _height
+  }
+
   solve(dt: number) {
     for (let i = 0; i < this.numParticles; i++) {
       // Floor collision ( we currently don't have a need for it)
       let y = this.positions[3 * i + 1];
-      const height = -0.7;
       if (y < height) {
         vecCopy(this.positions, i, this.prevPositions, i);
         this.positions[3 * i + 1] = height;
       }
+      if(i == 0)
+        console.log(this.positions[3*i+1])
     }
     for (const constraint of this.constraints) {
       constraint.solve(dt);
