@@ -8,12 +8,12 @@ import { ClothPhysicsObject } from "./PBD-simulation/physics-object";
  * It is the user's responsibility to register constraints within the app.
  */
 export default class Cloth extends ClothPhysicsObject {
-  constructor(mesh: Mesh, thickness: number) {
+  constructor(mesh: Mesh, thickness: number, vertexFix: boolean) {
     super(mesh, thickness);
-    this.init();
+    this.init(vertexFix);
   }
 
-  private init() {
+  private init(vertexFix :boolean) {
     // Set top of cloth to have a mass of 0 to hold still
     // in order to get hanging from clothesline visual
     {
@@ -31,7 +31,8 @@ export default class Cloth extends ClothPhysicsObject {
       // Thickness of the edge to zero out(?)
       const eps = 0.000001;
 
-      return
+      if(vertexFix === false) return
+
       for (let i = 0; i < this.numParticles; i++) {
         const x = this.positions[3 * i];
         const y = this.positions[3 * i + 1];

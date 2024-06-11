@@ -32,7 +32,7 @@ const steps = 10
 const sdt = dt / steps
 const gravity = new Float32Array([-1.1, -9.8, 2.5])
 
-const floorHeight = -2
+const floorHeight = -1
 
 await init()
 animate()
@@ -103,13 +103,13 @@ async function init() {
   //#endregion
 
   // modify this code to change object model
-  // currentMesh = cloth40x40Mesh
+  currentMesh = cloth40x40Mesh
   // currentMesh = clothOnepieceMesh
   // currentMesh = cubeMesh
-  currentMesh = planeMesh
+  // currentMesh = planeMesh
   scene.add(currentMesh)
   
-  cloth = new Cloth(currentMesh, thickness)
+  cloth = new Cloth(currentMesh, thickness, true)
 
   cloth.registerDistanceConstraint(0.0)
   cloth.registerPerformantBendingConstraint(1.0)
