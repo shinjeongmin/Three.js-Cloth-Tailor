@@ -22,6 +22,7 @@ const { cameraControls } = controls.setCameraControl(camera, canvas)
 let cloth40x40Mesh: Mesh
 let clothOnepieceMesh: Mesh
 let cubeMesh: Mesh
+let planeMesh: Mesh
 let currentMesh: Mesh
 let cloth:Cloth
 const customOBJLoader = new CustomOBJLoader()
@@ -93,10 +94,20 @@ async function init() {
   cubeMesh.scale.set(0.5,0.5,0.5)
   //#endregion
 
+  //#region plane object
+  objPath = 'plane.obj'
+  file = await customOBJLoader.load(objPath)
+  planeMesh = customOBJLoader.parse(file)
+  planeMesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
+  planeMesh.position.set(0,1,0)
+  planeMesh.scale.set(0.5,0.5,0.5)
+  //#endregion
+
   // modify this code to change object model
   // currentMesh = cloth40x40Mesh
   // currentMesh = clothOnepieceMesh
-  currentMesh = cubeMesh
+  // currentMesh = cubeMesh
+  currentMesh = planeMesh
   scene.add(currentMesh)
   
   cloth = new Cloth(currentMesh, thickness)
