@@ -4,6 +4,20 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 let axesHelper: AxesHelper
 let pointLightHelper: PointLightHelper
+let gui: GUI
+let target = {
+  index: 0,
+  max: 300,
+  position :{
+    x: 0,
+    y: 0,
+    z: 0,
+  }
+}
+
+export function initGui(){
+  gui = new GUI({ title: '🐞 Debug GUI', width: 300 })
+}
 
 export function setHelper(scene: Scene, pointLight: PointLight) {
   axesHelper = new AxesHelper(4)
@@ -25,7 +39,7 @@ export function setHelper(scene: Scene, pointLight: PointLight) {
  */
 export function setDebug
   (target: Mesh, pointLight: PointLight, ambientLight: AmbientLight, cameraControls: OrbitControls) {
-  const gui = new GUI({ title: '🐞 Debug GUI', width: 300 })
+  initGui()
   const targetOneFolder = gui.addFolder('target one')
 
   targetOneFolder.add(target.position, 'x').min(-5).max(5).step(0.5).name('pos x')
@@ -86,10 +100,6 @@ export function setDebug
 }
 
 export function vertexViewer(mesh: Mesh, scene: Scene){
-  let target = {
-    index: 0,
-    max : 300,
-  }
   const point = new Mesh(new SphereGeometry(0.01), new MeshBasicMaterial({color: 'green', transparent: false}))
 
   const updateVertexView = ()=>{
@@ -101,7 +111,6 @@ export function vertexViewer(mesh: Mesh, scene: Scene){
     point.position.set(pos.x,pos.y,pos.z)
   }
 
-  const gui = new GUI({ title: '🐞 Debug GUI', width: 300 })
   const targetOneFolder = gui.addFolder('target one')
   const vertexIndexController = targetOneFolder.add(target, 'index').min(0).max(target.max).step(1).name('vertex index')
   .onChange(updateVertexView)
@@ -116,9 +125,27 @@ export function vertexViewer(mesh: Mesh, scene: Scene){
     updateVertexView()
     vertexIndexController.updateDisplay()
   }
-  const obj = { increase, decrease } // 객체를 만들고 함수 r을 속성으로 추가
+  const obj = { increase, decrease }
   targetOneFolder.add(obj, 'increase').name('increase')
   targetOneFolder.add(obj, 'decrease').name('decrease')
 
+  // 
+  gui.add(target.position, 'x').name('position x').disable(true)
+  gui.add(target.position, 'y').name('position y').disable(true)
+  gui.add(target.position, 'z').name('position z').disable(true)
+
   scene.add(point)
+
+  console.log(gui.controllers)
+}
+
+export function updatePositionGui(mesh: Mesh){
+  // + to type change number
+  target.position.x = +mesh.geometry.getAttribute('position').getX(target.index).toFixed(4)
+  target.position.y = +mesh.geometry.getAttribute('position').getY(target.index).toFixed(4)
+  target.position.z = +mesh.geometry.getAttribute('position').getZ(target.index).toFixed(4)
+
+  gui.controllers.forEach(ctrl => {
+    ctrl.updateDisplay()
+  });
 }

@@ -7,7 +7,7 @@ import '../style-sheets/style.css'
 import Cloth from "../cloth"
 import {initInputEvents} from '../managers/input-manager'
 import {stateStop} from '../managers/state-manager'
-import { setDebug, vertexViewer } from "../debug/debug-gui"
+import { initGui, updatePositionGui, vertexViewer } from "../debug/debug-gui"
 
 const CANVAS_ID = 'scene'
 let ambientLight: AmbientLight
@@ -32,7 +32,7 @@ const steps = 10
 const sdt = dt / steps
 const gravity = new Float32Array([-1.1, -9.8, 2.5])
 
-const floorHeight = -5
+const floorHeight = -2
 
 await init()
 animate()
@@ -99,8 +99,7 @@ async function init() {
   file = await customOBJLoader.load(objPath)
   planeMesh = customOBJLoader.parse(file)
   planeMesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
-  planeMesh.position.set(0,1,0)
-  planeMesh.scale.set(0.5,0.5,0.5)
+  planeMesh.position.setY(0)
   //#endregion
 
   // modify this code to change object model
@@ -118,9 +117,10 @@ async function init() {
   // cloth.registerIsometricBendingConstraint(10.0)
 
   // set floor height
-  cloth.setFloorHeight(-5)
+  cloth.setFloorHeight(floorHeight)
 
   // debugger
+  initGui()
   vertexViewer(currentMesh, scene)
 }
 
@@ -155,6 +155,7 @@ async function animate() {
   }
 
   cameraControls.update()
+  updatePositionGui(currentMesh)
 
   renderer.render(scene, camera)
 }
