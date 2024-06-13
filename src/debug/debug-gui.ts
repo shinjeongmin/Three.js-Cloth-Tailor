@@ -2,9 +2,7 @@ import GUI from 'lil-gui'
 import { AmbientLight, AxesHelper, GridHelper, Mesh, MeshBasicMaterial, PointLight, PointLightHelper, Scene, SphereGeometry, Vector3 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
-let axesHelper: AxesHelper
-let pointLightHelper: PointLightHelper
-let gui: GUI
+export let gui: GUI
 let target = {
   index: 0,
   max: 300,
@@ -17,20 +15,6 @@ let target = {
 
 export function initGui(){
   gui = new GUI({ title: '🐞 Debug GUI', width: 300 })
-}
-
-export function setHelper(scene: Scene, pointLight: PointLight) {
-  axesHelper = new AxesHelper(4)
-  axesHelper.visible = false
-  scene.add(axesHelper)
-
-  pointLightHelper = new PointLightHelper(pointLight, undefined, 'orange')
-  pointLightHelper.visible = false
-  scene.add(pointLightHelper)
-
-  const gridHelper = new GridHelper(20, 20, 'teal', 'darkgray')
-  gridHelper.position.y = -0.01
-  scene.add(gridHelper)
 }
 
 /**
@@ -64,17 +48,6 @@ export function setDebug
   const lightsFolder = gui.addFolder('Lights')
   lightsFolder.add(pointLight, 'visible').name('point light')
   lightsFolder.add(ambientLight, 'visible').name('ambient light')
-
-  //chek helper is initialized
-  if (!axesHelper || !pointLightHelper) {
-    throw Error("helper is not initialized");
-  }
-  else {
-    const helpersFolder = gui.addFolder('Helpers')
-    helpersFolder.add(axesHelper, 'visible').name('axes')
-    helpersFolder.add(pointLightHelper, 'visible').name('pointLight')
-
-  }
 
   const cameraFolder = gui.addFolder('Camera')
   cameraFolder.add(cameraControls, 'autoRotate')

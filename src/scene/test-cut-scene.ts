@@ -7,11 +7,12 @@ import '../style-sheets/style.css'
 import Cloth from "../cloth"
 import {initInputEvents} from '../managers/input-manager'
 import {stateStop} from '../managers/state-manager'
-import { initGui, updatePositionGui, vertexViewer } from "../debug/debug-gui"
+import { initGui, setDebug, updatePositionGui, vertexViewer } from "../debug/debug-gui"
 
 const CANVAS_ID = 'scene'
 let ambientLight: AmbientLight
 let directionalLight: DirectionalLight
+let pointLight: PointLight
 
 // global variable
 const { scene, canvas, renderer } = initScene(CANVAS_ID)
@@ -47,6 +48,8 @@ async function init() {
     scene.add(ambientLight)
     directionalLight = new DirectionalLight('white', 0.5)
     scene.add(directionalLight)
+    pointLight = new PointLight('white', 0.1)
+    scene.add(pointLight)
   }
   const planeGeometry = new PlaneGeometry(3, 3)
   const planeMaterial = new MeshLambertMaterial({
@@ -61,8 +64,6 @@ async function init() {
   plane.rotateX(Math.PI / 2)
   plane.receiveShadow = true
   plane.position.setY(floorHeight)
-  console.log(plane.getWorldPosition(plane.position))
-  console.log(plane.position)
 
   scene.add(plane)
 
@@ -72,8 +73,6 @@ async function init() {
   let file = await customOBJLoader.load(objPath)
   cloth40x40Mesh = customOBJLoader.parse(file)
   cloth40x40Mesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
-  cloth40x40Mesh.position.set(0,0.5,0)
-  cloth40x40Mesh.scale.set(0.5,0.5,0.5)
   //#endregion
 
   //#region cloth onepiece object
@@ -81,8 +80,6 @@ async function init() {
   file = await customOBJLoader.load(objPath)
   clothOnepieceMesh = customOBJLoader.parse(file)
   clothOnepieceMesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
-  clothOnepieceMesh.position.set(0,1,0)
-  clothOnepieceMesh.scale.set(0.5,0.5,0.5)
   //#endregion
 
   //#region cube object
