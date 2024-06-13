@@ -65,7 +65,6 @@ async function init() {
   plane.rotateX(Math.PI / 2)
   plane.receiveShadow = true
   plane.position.setY(floorHeight)
-
   scene.add(plane)
 
   // model load
@@ -98,6 +97,7 @@ async function init() {
   planeMesh = customOBJLoader.parse(file)
   planeMesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
   planeMesh.position.setY(0)
+  planeMesh.name = 'plane'
   //#endregion
 
   // modify this code to change object model
@@ -159,6 +159,8 @@ async function animate() {
 
   cameraControls.update()
   gui.updatePositionGui(currentMesh)
+
+  currentMesh.geometry.computeBoundingSphere()
 
   renderer.render(scene, camera)
 }
