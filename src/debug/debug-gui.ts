@@ -1,6 +1,7 @@
 import GUI from 'lil-gui'
 import { AmbientLight, AxesHelper, GridHelper, Mesh, MeshBasicMaterial, PointLight, PointLightHelper, Scene, SphereGeometry, Vector3 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import * as mode from '../managers/mode-manager'
 
 export let gui: GUI
 let target = {
@@ -24,24 +25,24 @@ export function initGui(){
 export function setTestDebug
   (target: Mesh, pointLight: PointLight, ambientLight: AmbientLight, cameraControls: OrbitControls) {
   initGui()
-  const targetOneFolder = gui.addFolder('target one')
+  const starterDebugFolder = gui.addFolder('target one')
 
-  targetOneFolder.add(target.position, 'x').min(-5).max(5).step(0.5).name('pos x')
-  targetOneFolder.add(target.position, 'y').min(-5).max(5).step(0.5).name('pos y')
-  targetOneFolder.add(target.position, 'z').min(-5).max(5).step(0.5).name('pos z')
+  starterDebugFolder.add(target.position, 'x').min(-5).max(5).step(0.5).name('pos x')
+  starterDebugFolder.add(target.position, 'y').min(-5).max(5).step(0.5).name('pos y')
+  starterDebugFolder.add(target.position, 'z').min(-5).max(5).step(0.5).name('pos z')
 
-  targetOneFolder.add(target.material, 'wireframe')
-  targetOneFolder.addColor(target.material, 'color')
-  targetOneFolder.add(target.material, 'metalness', 0, 1, 0.1)
-  targetOneFolder.add(target.material, 'roughness', 0, 1, 0.1)
+  starterDebugFolder.add(target.material, 'wireframe')
+  starterDebugFolder.addColor(target.material, 'color')
+  starterDebugFolder.add(target.material, 'metalness', 0, 1, 0.1)
+  starterDebugFolder.add(target.material, 'roughness', 0, 1, 0.1)
 
-  targetOneFolder
+  starterDebugFolder
     .add(target.rotation, 'x', -Math.PI * 2, Math.PI * 2, Math.PI / 4)
     .name('rotate x')
-  targetOneFolder
+  starterDebugFolder
     .add(target.rotation, 'y', -Math.PI * 2, Math.PI * 2, Math.PI / 4)
     .name('rotate y')
-  targetOneFolder
+  starterDebugFolder
     .add(target.rotation, 'z', -Math.PI * 2, Math.PI * 2, Math.PI / 4)
     .name('rotate z')
 
@@ -84,8 +85,8 @@ export function vertexViewer(mesh: Mesh, scene: Scene){
     point.position.set(pos.x,pos.y,pos.z)
   }
 
-  const targetOneFolder = gui.addFolder('target one')
-  const vertexIndexController = targetOneFolder.add(target, 'index').min(0).max(target.max).step(1).name('vertex index')
+  const vertexDebugFolder = gui.addFolder('vertex debugger')
+  const vertexIndexController = vertexDebugFolder.add(target, 'index').min(0).max(target.max).step(1).name('vertex index')
   .onChange(updateVertexView)
 
   const increase = () => { 
@@ -99,8 +100,8 @@ export function vertexViewer(mesh: Mesh, scene: Scene){
     vertexIndexController.updateDisplay()
   }
   const obj = { increase, decrease }
-  targetOneFolder.add(obj, 'increase').name('increase')
-  targetOneFolder.add(obj, 'decrease').name('decrease')
+  vertexDebugFolder.add(obj, 'increase').name('increase')
+  vertexDebugFolder.add(obj, 'decrease').name('decrease')
 
   // 
   gui.add(target.position, 'x').name('position x').disable(true)
@@ -108,8 +109,6 @@ export function vertexViewer(mesh: Mesh, scene: Scene){
   gui.add(target.position, 'z').name('position z').disable(true)
 
   scene.add(point)
-
-  console.log(gui.controllers)
 }
 
 export function updatePositionGui(mesh: Mesh){
@@ -124,5 +123,9 @@ export function updatePositionGui(mesh: Mesh){
 }
 
 export function changeMode(){
-  
+  const modeChangeFolder = gui.addFolder('change mode')
+  const modeEnumTypes = Object.keys(mode.Mode).filter(key => isNaN(Number(key)))
+  modeChangeFolder.add({mode: mode.curMode}, 'mode', modeEnumTypes).onChange((val: mode.Mode)=>{
+    mode.changeMode(val)
+  })
 }

@@ -1,4 +1,4 @@
-import {stateStop, stopState} from './state-manager'
+import {stateStop, stopState} from './mode-manager'
 
 export function initInputEvents(){
   eventSpaceBar()

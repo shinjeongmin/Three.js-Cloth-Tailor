@@ -6,7 +6,7 @@ import CustomOBJLoader, { loadOBJ } from '../loader'
 import '../style-sheets/style.css'
 import Cloth from "../cloth"
 import {initInputEvents} from '../managers/input-manager'
-import {stateStop} from '../managers/state-manager'
+import {stateStop} from '../managers/mode-manager'
 import * as gui from "../debug/debug-gui"
 
 const CANVAS_ID = 'scene'
