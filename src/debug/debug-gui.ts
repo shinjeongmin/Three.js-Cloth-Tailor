@@ -14,7 +14,7 @@ let target = {
   }
 }
 
-export function initGui(){
+export function init(){
   gui = new GUI({ title: '🐞 Debug GUI', width: 300 })
 }
 
@@ -24,7 +24,7 @@ export function initGui(){
  */
 export function setTestDebug
   (target: Mesh, pointLight: PointLight, ambientLight: AmbientLight, cameraControls: OrbitControls) {
-  initGui()
+  init()
   const starterDebugFolder = gui.addFolder('target one')
 
   starterDebugFolder.add(target.position, 'x').min(-5).max(5).step(0.5).name('pos x')
@@ -125,7 +125,7 @@ export function updatePositionGui(mesh: Mesh){
 export function changeMode(){
   const modeChangeFolder = gui.addFolder('change mode')
   const modeEnumTypes = Object.keys(mode.Mode).filter(key => isNaN(Number(key)))
-  modeChangeFolder.add({mode: mode.curMode}, 'mode', modeEnumTypes).onChange((val: mode.Mode)=>{
+  modeChangeFolder.add({mode: mode.Mode[mode.curMode]}, 'mode', modeEnumTypes).onChange((val: mode.Mode)=>{
     mode.changeMode(val)
   })
 }

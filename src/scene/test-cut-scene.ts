@@ -117,7 +117,7 @@ async function init() {
   cloth.setFloorHeight(floorHeight)
 
   // debugger
-  gui.initGui()
+  gui.init()
   gui.vertexViewer(currentMesh, scene)
   gui.changeMode()
 }
