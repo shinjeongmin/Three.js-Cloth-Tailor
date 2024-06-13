@@ -8,6 +8,7 @@ import Cloth from "../cloth"
 import {initInputEvents} from '../managers/input-manager'
 import {stateStop} from '../managers/mode-manager'
 import * as gui from "../debug/debug-gui"
+import * as raycast from '../raycast'
 
 const CANVAS_ID = 'scene'
 let ambientLight: AmbientLight
@@ -120,6 +121,10 @@ async function init() {
   gui.init()
   gui.vertexViewer(currentMesh, scene)
   gui.changeMode()
+
+  // raycast
+  raycast.init(scene, camera)
+
 }
 
 function physicsSimulation(){
