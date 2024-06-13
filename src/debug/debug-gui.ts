@@ -21,7 +21,7 @@ export function initGui(){
  * @desc must call after setHelper
  * @desc-kr 반드시 setHelper 호출 후에 호출될 것
  */
-export function setDebug
+export function setTestDebug
   (target: Mesh, pointLight: PointLight, ambientLight: AmbientLight, cameraControls: OrbitControls) {
   initGui()
   const targetOneFolder = gui.addFolder('target one')
@@ -121,4 +121,8 @@ export function updatePositionGui(mesh: Mesh){
   gui.controllers.forEach(ctrl => {
     ctrl.updateDisplay()
   });
+}
+
+export function changeMode(){
+  
 }

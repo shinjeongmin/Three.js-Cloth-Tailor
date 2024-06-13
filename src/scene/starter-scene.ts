@@ -18,6 +18,7 @@ import {initScene} from '../canvas-window/render-setting'
 import * as controls from '../controls'
 import * as debug from '../debug/debug-gui'
 import * as loader from '../loader'
+import * as helper from '../debug/helper'
 
 const CANVAS_ID = 'scene'
 let ambientLight: AmbientLight
@@ -98,8 +99,8 @@ async function init() {
     document.body.appendChild(stats.dom)
   }
 
-  debug.setHelper(scene, pointLight)
-  debug.setDebug(cube, pointLight, ambientLight, cameraControls)
+  helper.setHelper(scene, pointLight)
+  debug.setTestDebug(cube, pointLight, ambientLight, cameraControls)
 }
 
 function animate() {

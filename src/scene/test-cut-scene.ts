@@ -7,7 +7,7 @@ import '../style-sheets/style.css'
 import Cloth from "../cloth"
 import {initInputEvents} from '../managers/input-manager'
 import {stateStop} from '../managers/state-manager'
-import { initGui, setDebug, updatePositionGui, vertexViewer } from "../debug/debug-gui"
+import * as gui from "../debug/debug-gui"
 
 const CANVAS_ID = 'scene'
 let ambientLight: AmbientLight
@@ -117,8 +117,9 @@ async function init() {
   cloth.setFloorHeight(floorHeight)
 
   // debugger
-  initGui()
-  vertexViewer(currentMesh, scene)
+  gui.initGui()
+  gui.vertexViewer(currentMesh, scene)
+  gui.changeMode()
 }
 
 function physicsSimulation(){
@@ -152,7 +153,7 @@ async function animate() {
   }
 
   cameraControls.update()
-  updatePositionGui(currentMesh)
+  gui.updatePositionGui(currentMesh)
 
   renderer.render(scene, camera)
 }
