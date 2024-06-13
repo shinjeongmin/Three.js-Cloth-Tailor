@@ -1,4 +1,5 @@
 import { BufferGeometry, Camera, Line, LineBasicMaterial, Ray, Raycaster, Scene, Vector2, Vector3 } from "three"
+import * as mode from './managers/mode-manager'
 
 let raycaster = new Raycaster()
 const mouse = new Vector2()
@@ -6,6 +7,9 @@ let gizmoLine: Line = new Line()
 
 export function init(scene: Scene, camera: Camera): Raycaster{
   window.addEventListener('mousemove', onMouseMove, false)
+  window.addEventListener('mousemove', ()=>{
+    if(mode.curMode === "NONE") {scene.remove(gizmoLine)}
+  }, false)
 
   const viewInterFunc = ()=>viewIntersectPoint(scene, camera)
 
@@ -24,9 +28,15 @@ function onMouseMove(event: MouseEvent) {
   // Normalize mouse coordinates to -1 to 1 range
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1
   mouse.y = - (event.clientY / window.innerHeight) * 2 + 1
+
 }
 
 export function viewIntersectPoint(scene: Scene, camera: Camera){
+  if(mode.curMode === "NONE") {
+    scene.remove(gizmoLine)
+    return
+  }
+
   raycaster.setFromCamera(mouse, camera)
   const intersects = raycaster.intersectObjects(scene.children)
 

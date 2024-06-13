@@ -6,7 +6,7 @@ import CustomOBJLoader, { loadOBJ } from '../loader'
 import '../style-sheets/style.css'
 import Cloth from "../cloth"
 import {initInputEvents} from '../managers/input-manager'
-import {stateStop} from '../managers/mode-manager'
+import * as mode from '../managers/mode-manager'
 import * as gui from "../debug/debug-gui"
 import * as raycast from '../raycast'
 
@@ -42,6 +42,14 @@ animate()
 async function init() {
   // ===== Managers =====
   initInputEvents()
+  mode.init(
+    ()=>{ // NONE
+      cameraControls.enabled = true
+    },
+    ()=>{ // RAYCAST
+      cameraControls.enabled = false
+    }
+  )
 
   // ===== 💡 LIGHTS =====
   {
@@ -148,7 +156,7 @@ async function animate() {
   await requestAnimationFrame(animate)
 
   //#region simulation
-  if(!stateStop) physicsSimulation()
+  if(!mode.stateStop) physicsSimulation()
   //#endregion
 
   if (resizeRendererToDisplaySize(renderer)) {
@@ -158,6 +166,7 @@ async function animate() {
   }
 
   cameraControls.update()
+
   gui.updatePositionGui(currentMesh)
 
   currentMesh.geometry.computeBoundingSphere()

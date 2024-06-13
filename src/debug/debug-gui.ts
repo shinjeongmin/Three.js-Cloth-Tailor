@@ -124,8 +124,8 @@ export function updatePositionGui(mesh: Mesh){
 
 export function changeMode(){
   const modeChangeFolder = gui.addFolder('change mode')
-  const modeEnumTypes = Object.keys(mode.Mode).filter(key => isNaN(Number(key)))
-  modeChangeFolder.add({mode: mode.Mode[mode.curMode]}, 'mode', modeEnumTypes).onChange((val: mode.Mode)=>{
+  const modeEnumTypes = mode.Modes
+  modeChangeFolder.add({mode: mode.curMode}, 'mode', modeEnumTypes).onChange((val: mode.Mode)=>{
     mode.changeMode(val)
   })
 }
