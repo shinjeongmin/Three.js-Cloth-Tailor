@@ -60,6 +60,7 @@ async function init() {
     pointLight = new PointLight('white', 0.1)
     scene.add(pointLight)
   }
+  // const planeGeometry = new PlaneGeometry(3, 3)
   const planeGeometry = new PlaneGeometry(3, 3)
   const planeMaterial = new MeshLambertMaterial({
     color: 'gray',
@@ -68,11 +69,13 @@ async function init() {
     side: 2,
     transparent: true,
     opacity: 0.4,
+    wireframe: true,
   })
   const plane = new Mesh(planeGeometry, planeMaterial)
   plane.rotateX(Math.PI / 2)
   plane.receiveShadow = true
   plane.position.setY(floorHeight)
+  plane.name = 'floor'
   scene.add(plane)
 
   // model load

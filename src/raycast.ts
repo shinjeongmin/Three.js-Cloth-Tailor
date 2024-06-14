@@ -1,5 +1,6 @@
-import { BufferGeometry, Camera, Line, LineBasicMaterial, Ray, Raycaster, Scene, Vector2, Vector3 } from "three"
+import { BufferGeometry, Camera, InstancedInterleavedBuffer, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, Ray, Raycaster, Scene, SphereGeometry, Vector2, Vector3 } from "three"
 import * as mode from './managers/mode-manager'
+import { findClosestVertex } from "./vertex-finder"
 
 let raycaster = new Raycaster()
 const mouse = new Vector2()
@@ -14,6 +15,7 @@ export function init(scene: Scene, camera: Camera): Raycaster{
   const viewInterFunc = ()=>viewIntersectPoint(scene, camera)
 
   window.addEventListener('mousedown', ()=>{
+    viewInterFunc(),
     window.addEventListener('mousemove', viewInterFunc, false)
   }, false)
   window.addEventListener('mouseup', ()=>{
@@ -48,20 +50,24 @@ export function viewIntersectPoint(scene: Scene, camera: Camera){
       const intersectedObject = intersect.object
       const intersectPoint = intersect.point
 
-      drawLine(scene, camera.position, intersectPoint)
+      const closestPoint = findClosestVertex(intersect.point, intersect.object as Mesh)
+
+      positionViewer(closestPoint, scene)
+
+      drawLine(scene, closestPoint)
       break
     }
   }
 }
 
-function drawLine(scene: Scene, vecOrigin: Vector3, vecDest: Vector3){
+function drawLine(scene: Scene, vec: Vector3){
   let material = new LineBasicMaterial({
     color: '#09ff00',
     linewidth: 10
   })
-  let startVec = new Vector3().copy(vecDest)
+  let startVec = new Vector3().copy(vec)
   startVec.y += 0.1
-  let endVec = new Vector3().copy(vecDest)
+  let endVec = new Vector3().copy(vec)
   // endVec.multiplyScalar(1)
   
   let midVec = new Vector3()
@@ -72,4 +78,15 @@ function drawLine(scene: Scene, vecOrigin: Vector3, vecDest: Vector3){
   gizmoLine.geometry = geometry
   gizmoLine.material = material
   scene.add(gizmoLine)
+}
+
+export function positionViewer(vec: Vector3, scene: Scene){
+  const point = new Mesh(new SphereGeometry(0.01), new MeshBasicMaterial({color: 'green', transparent: false}))
+
+  const updateVertexView = ()=>{
+    const pos = vec
+    point.position.set(pos.x,pos.y,pos.z)
+  }
+
+  scene.add(point)
 }
