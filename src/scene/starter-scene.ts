@@ -33,7 +33,7 @@ camera.position.set(2, 2, 5)
 const {cameraControls} = controls.setCameraControl(camera, canvas)
 
 await init()
-animate()
+update()
 
 async function init() {
   // ===== 💡 LIGHTS =====
@@ -103,8 +103,8 @@ async function init() {
   debug.setTestDebug(cube, pointLight, ambientLight, cameraControls)
 }
 
-function animate() {
-  requestAnimationFrame(animate)
+function update() {
+  requestAnimationFrame(update)
 
   stats.update()
 

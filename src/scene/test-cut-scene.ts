@@ -37,7 +37,7 @@ const gravity = new Float32Array([-1.1, -9.8, 2.5])
 const floorHeight = -1
 
 await init()
-animate()
+update()
 
 async function init() {
   // ===== Managers =====
@@ -155,8 +155,8 @@ function physicsSimulation(){
 
 }
 
-async function animate() {
-  await requestAnimationFrame(animate)
+async function update() {
+  await requestAnimationFrame(update)
 
   //#region simulation
   if(!mode.stateStop) physicsSimulation()
