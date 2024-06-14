@@ -1,6 +1,6 @@
 import { BufferGeometry, Camera, InstancedInterleavedBuffer, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, Ray, Raycaster, Scene, SphereGeometry, Vector2, Vector3 } from "three"
 import * as mode from './managers/mode-manager'
-import { findClosestVertex } from "./debug/vertex-finder"
+import { findClosestVertex, findClosestVertexIndex } from "./debug/vertex-finder"
 import * as gui from "./debug/debug-gui"
 
 let raycaster = new Raycaster()
@@ -52,6 +52,7 @@ export function viewIntersectPoint(scene: Scene, camera: Camera){
       const intersectPoint = intersect.point
 
       const closestPoint = findClosestVertex(intersect.point, intersect.object as Mesh)
+      console.log(findClosestVertexIndex(intersect.point, intersect.object as Mesh))
 
       drawLine(scene, closestPoint)
       gui.updatePositionGuiWithVector3(closestPoint)

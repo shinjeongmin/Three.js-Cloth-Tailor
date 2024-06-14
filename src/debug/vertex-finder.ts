@@ -32,6 +32,26 @@ export function findClosestVertex(intersectPoint: THREE.Vector3, mesh: THREE.Mes
   return closestVertex!
 }
 
-export function findClosestVertexIndex(intersectPoint: THREE.Vector3, mesh: THREE.Mesh){
+export function findClosestVertexIndex(intersectPoint: THREE.Vector3, mesh: THREE.Mesh): number{
+  let closestVertexIndex: number
+  let closestDistance = Infinity
 
+  const positionAttribute = mesh.geometry.attributes.position
+  const vertex = new THREE.Vector3()
+  const worldVertex = new THREE.Vector3()
+  const worldMatrix = mesh.matrixWorld
+  
+  for (let i = 0; i < positionAttribute.count; i++) {
+      vertex.fromBufferAttribute(positionAttribute, i)
+
+      worldVertex.copy(vertex).applyMatrix4(worldMatrix)
+
+      const distance = intersectPoint.distanceToSquared(worldVertex)
+      if (distance < closestDistance) {
+        closestDistance = distance
+        closestVertexIndex = i
+      }
+  }
+
+  return closestVertexIndex!
 }
