@@ -1,5 +1,5 @@
-import { Mesh } from "three";
-import { ClothPhysicsObject } from "./PBD-simulation/physics-object";
+import { Mesh } from "three"
+import { ClothPhysicsObject } from "./PBD-simulation/physics-object"
 
 /**
  * Cloth that hangs (like from a clothesline)
@@ -9,8 +9,8 @@ import { ClothPhysicsObject } from "./PBD-simulation/physics-object";
  */
 export default class Cloth extends ClothPhysicsObject {
   constructor(mesh: Mesh, thickness: number, vertexFix: boolean) {
-    super(mesh, thickness);
-    this.init(vertexFix);
+    super(mesh, thickness)
+    this.init(vertexFix)
   }
 
   private init(vertexFix :boolean) {
@@ -18,27 +18,27 @@ export default class Cloth extends ClothPhysicsObject {
     // in order to get hanging from clothesline visual
     {
       // Variables to store top row
-      let minX = Number.MAX_VALUE;
-      let maxX = -Number.MAX_VALUE;
-      let maxY = -Number.MAX_VALUE;
+      let minX = Number.MAX_VALUE
+      let maxX = -Number.MAX_VALUE
+      let maxY = -Number.MAX_VALUE
 
       for (let i = 0; i < this.numParticles; i++) {
-        minX = Math.min(minX, this.positions[3 * i]);
-        maxX = Math.max(maxX, this.positions[3 * i]);
-        maxY = Math.max(maxY, this.positions[3 * i + 1]);
+        minX = Math.min(minX, this.positions[3 * i])
+        maxX = Math.max(maxX, this.positions[3 * i])
+        maxY = Math.max(maxY, this.positions[3 * i + 1])
       }
 
       // Thickness of the edge to zero out(?)
-      const eps = 0.000001;
+      const eps = 0.000001
 
       if(vertexFix === false) return
 
       for (let i = 0; i < this.numParticles; i++) {
-        const x = this.positions[3 * i];
-        const y = this.positions[3 * i + 1];
+        const x = this.positions[3 * i]
+        const y = this.positions[3 * i + 1]
         if (y > maxY - eps && (x < minX + eps || x > maxX - eps))
           // if (y > maxY - eps)
-          this.invMass[i] = 0.0;
+          this.invMass[i] = 0.0
       }
     }
   }
