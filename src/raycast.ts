@@ -52,7 +52,6 @@ export function viewIntersectPoint(scene: Scene, camera: Camera){
       const intersectPoint = intersect.point
 
       const closestPoint = findClosestVertex(intersect.point, intersect.object as Mesh)
-      console.log(findClosestVertexIndex(intersect.point, intersect.object as Mesh))
 
       drawLine(scene, closestPoint)
       gui.updatePositionGuiWithVector3(closestPoint)
