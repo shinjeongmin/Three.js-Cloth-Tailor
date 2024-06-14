@@ -16,6 +16,7 @@ let target = {
 
 export function init(){
   gui = new GUI({ title: '🐞 Debug GUI', width: 300 })
+  gui.add({1:'start/stop cloth simulation'}, '1').name('spacebar').disable(true)
 }
 
 /**
