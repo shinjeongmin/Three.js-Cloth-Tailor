@@ -1,6 +1,6 @@
 import { BufferGeometry, Camera, InstancedInterleavedBuffer, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, Ray, Raycaster, Scene, SphereGeometry, Vector2, Vector3 } from "three"
 import * as mode from './managers/mode-manager'
-import { findClosestVertex } from "./vertex-finder"
+import { findClosestVertex } from "./debug/vertex-finder"
 
 let raycaster = new Raycaster()
 const mouse = new Vector2()
