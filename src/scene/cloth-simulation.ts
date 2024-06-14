@@ -155,7 +155,7 @@ async function animate() {
   }
 
   cameraControls.update()
-  gui.updatePositionGui(currentMesh)
+  gui.updatePositionGuiWithMesh(currentMesh)
 
   renderer.render(scene, camera)
 }

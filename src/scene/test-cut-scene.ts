@@ -170,7 +170,7 @@ async function animate() {
 
   cameraControls.update()
 
-  gui.updatePositionGui(currentMesh)
+  if(mode.curMode === "NONE") gui.updatePositionGuiWithMesh(currentMesh)
 
   currentMesh.geometry.computeBoundingSphere()
 

@@ -103,7 +103,7 @@ export function vertexViewer(mesh: Mesh, scene: Scene){
   vertexDebugFolder.add(obj, 'increase').name('increase')
   vertexDebugFolder.add(obj, 'decrease').name('decrease')
 
-  // 
+  // vertex viewer
   gui.add(target.position, 'x').name('position x').disable(true)
   gui.add(target.position, 'y').name('position y').disable(true)
   gui.add(target.position, 'z').name('position z').disable(true)
@@ -111,11 +111,22 @@ export function vertexViewer(mesh: Mesh, scene: Scene){
   scene.add(point)
 }
 
-export function updatePositionGui(mesh: Mesh){
+export function updatePositionGuiWithMesh(mesh: Mesh){
   // + to type change number
   target.position.x = +mesh.geometry.getAttribute('position').getX(target.index).toFixed(4)
   target.position.y = +mesh.geometry.getAttribute('position').getY(target.index).toFixed(4)
   target.position.z = +mesh.geometry.getAttribute('position').getZ(target.index).toFixed(4)
+
+  gui.controllers.forEach(ctrl => {
+    ctrl.updateDisplay()
+  });
+}
+
+export function updatePositionGuiWithVector3(pos: Vector3){
+  // + for type change string to number
+  target.position.x = +pos.x.toFixed(4)
+  target.position.y = +pos.y.toFixed(4)
+  target.position.z = +pos.z.toFixed(4)
 
   gui.controllers.forEach(ctrl => {
     ctrl.updateDisplay()
