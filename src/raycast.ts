@@ -2,6 +2,7 @@ import { BufferGeometry, Camera, InstancedInterleavedBuffer, Line, LineBasicMate
 import * as mode from './managers/mode-manager'
 import { findClosestVertex, findClosestVertexIndex } from "./geometry/vertex-finder"
 import * as gui from "./gui/gui"
+import { removeVertex } from "./geometry/vertex-remover"
 
 let raycaster = new Raycaster()
 const mouse = new Vector2()
@@ -27,7 +28,8 @@ export function init(scene: Scene, camera: Camera): Raycaster{
     } 
     else if(mode.curMode === "REMOVE"){
       // remove clicked vertex
-      console.log(getIntersectVertex(scene, camera))
+      const clickMesh: Mesh = getIntersectObject(scene, camera)!
+      if(clickMesh !== null) removeVertex(clickMesh, getIntersectVertex(scene, camera))
       window.addEventListener('mousemove', ()=>{}, false)
     }
   }, false)
@@ -50,6 +52,22 @@ function onMouseMove(event: MouseEvent) {
   // Normalize mouse coordinates to -1 to 1 range
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1
   mouse.y = - (event.clientY / window.innerHeight) * 2 + 1
+}
+
+function getIntersectObject(scene: Scene, camera: Camera): Mesh | null{
+  raycaster.setFromCamera(mouse, camera)
+  const intersects = raycaster.intersectObjects(scene.children)
+
+  if (intersects.length > 0) {
+    for(let i = 0; i < intersects.length; i++){
+      const intersect = intersects[i]
+      if(intersect.object === gizmoLine) continue
+
+      return intersect.object as Mesh
+    }
+  }
+  
+  return null
 }
 
 export function viewIntersectPoint(scene: Scene, camera: Camera){

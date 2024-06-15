@@ -2,7 +2,7 @@ export type Mode = "NONE" | "RAYCAST" | "REMOVE"
 export const Modes: Mode[] = ["NONE", "RAYCAST", "REMOVE"]
 
 export let stateStop:boolean = false
-export let curMode: Mode = "RAYCAST"
+export let curMode: Mode = "REMOVE"
 let changeModeEvent: Function
 let changeModeEventNONE: Function
 let changeModeEventRAYCAST: Function
