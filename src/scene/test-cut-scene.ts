@@ -41,14 +41,20 @@ update()
 
 async function init() {
   // ===== Managers =====
-  initInputEvents()
   mode.init(
+    ()=>{ // common
+      initInputEvents()
+      raycast.init(scene, camera)
+    },
     ()=>{ // NONE
       cameraControls.enabled = true
     },
     ()=>{ // RAYCAST
       cameraControls.enabled = false
-    }
+    },
+    ()=>{ // REMOVE
+      cameraControls.enabled = true
+    },
   )
 
   // ===== 💡 LIGHTS =====
@@ -132,10 +138,6 @@ async function init() {
   gui.init()
   gui.vertexViewer(currentMesh, scene)
   gui.changeMode()
-
-  // raycast
-  raycast.init(scene, camera)
-
 }
 
 function physicsSimulation(){

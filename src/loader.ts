@@ -124,7 +124,6 @@ export default class CustomOBJLoader {
         }
       }
     }
-    console.log(finalPosition, finalIndices)
 
     const newGeometry = new BufferGeometry()
     newGeometry.setAttribute('position', new BufferAttribute(new Float32Array(finalPosition), 3))

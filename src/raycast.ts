@@ -10,18 +10,32 @@ let gizmoLine: Line = new Line()
 export function init(scene: Scene, camera: Camera): Raycaster{
   window.addEventListener('mousemove', onMouseMove, false)
   window.addEventListener('mousemove', ()=>{
-    if(mode.curMode === "NONE") {scene.remove(gizmoLine)}
+    if(mode.curMode !== "RAYCAST") {scene.remove(gizmoLine)}
+    
+    if(mode.curMode === "REMOVE"){
+      window.addEventListener('mousemove', viewInterFunc, false)
+    }
   }, false)
 
-  const viewInterFunc = ()=>viewIntersectPoint(scene, camera)
+  const viewInterFunc: ()=>void = ()=>viewIntersectPoint(scene, camera)
 
   window.addEventListener('mousedown', ()=>{
-    viewInterFunc(),
-    window.addEventListener('mousemove', viewInterFunc, false)
+    if(mode.curMode === "RAYCAST"){
+      viewInterFunc(),
+      window.addEventListener('mousemove', viewInterFunc, false)
+    } 
+    else if(mode.curMode === "REMOVE"){
+      console.log(getIntersectVertex(scene, camera))
+    }
   }, false)
-  window.addEventListener('mouseup', ()=>{
-    window.removeEventListener('mousemove', viewInterFunc, false)
-    gizmoLine.clear()
+
+  window.addEventListener('mouseup', ()=>{ 
+    if(mode.curMode === "RAYCAST"){
+      window.removeEventListener('mousemove', viewInterFunc, false)
+      scene.remove(gizmoLine)
+    }
+    else if(mode.curMode === "REMOVE"){
+    }
   }, false)
 
   return raycaster
@@ -31,7 +45,6 @@ function onMouseMove(event: MouseEvent) {
   // Normalize mouse coordinates to -1 to 1 range
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1
   mouse.y = - (event.clientY / window.innerHeight) * 2 + 1
-
 }
 
 export function viewIntersectPoint(scene: Scene, camera: Camera){
@@ -47,9 +60,6 @@ export function viewIntersectPoint(scene: Scene, camera: Camera){
     for(let i = 0; i < intersects.length; i++){
       const intersect = intersects[i]
       if(intersect.object === gizmoLine) continue
-
-      const intersectedObject = intersect.object
-      const intersectPoint = intersect.point
 
       const closestPoint = findClosestVertex(intersect.point, intersect.object as Mesh)
 
@@ -78,4 +88,22 @@ function drawLine(scene: Scene, vec: Vector3){
   gizmoLine.geometry = geometry
   gizmoLine.material = material
   scene.add(gizmoLine)
+}
+
+export function getIntersectVertex(scene: Scene, camera: Camera): number[]{
+  raycaster.setFromCamera(mouse, camera)
+  const intersects = raycaster.intersectObjects(scene.children)
+  let closestVertexIndices
+
+  if (intersects.length > 0) {
+    for(let i = 0; i < intersects.length; i++){
+      const intersect = intersects[i]
+      if(intersect.object === gizmoLine) continue
+
+      closestVertexIndices = findClosestVertexIndex(intersect.point, intersect.object as Mesh)
+
+      break
+    }
+  }
+  return closestVertexIndices!
 }
