@@ -29,8 +29,9 @@ export function init(scene: Scene, camera: Camera): Raycaster{
     else if(mode.curMode === "REMOVE"){
       // remove clicked vertex
       const clickMesh: Mesh = getIntersectObject(scene, camera)!
-      if(clickMesh !== null) removeVertex(clickMesh, getIntersectVertex(scene, camera))
-      window.addEventListener('mousemove', ()=>{}, false)
+      const vertex = getIntersectVertex(scene, camera)[0]
+      if(clickMesh !== null) removeVertex(clickMesh, vertex)
+      window.addEventListener('mousemove', ()=>{}, false) // keep remove when mouse down
     }
   }, false)
 
