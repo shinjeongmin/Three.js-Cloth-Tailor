@@ -53,7 +53,7 @@ async function init() {
       cameraControls.enabled = false
     },
     ()=>{ // REMOVE
-      cameraControls.enabled = true
+      cameraControls.enabled = false
     },
   )
 
