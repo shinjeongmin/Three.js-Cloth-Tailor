@@ -1,5 +1,5 @@
 import { AxesHelper, GridHelper, PointLight, PointLightHelper, Scene } from "three"
-import { gui } from './debug-gui'
+import { gui } from './gui'
 
 let axesHelper: AxesHelper
 let pointLightHelper: PointLightHelper

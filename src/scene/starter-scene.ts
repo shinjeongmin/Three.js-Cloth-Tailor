@@ -16,9 +16,9 @@ import { resizeRendererToDisplaySize } from '../canvas-window/responsiveness'
 import '../style-sheets/style.css'
 import {initScene} from '../canvas-window/render-setting'
 import * as controls from '../controls'
-import * as debug from '../debug/debug-gui'
+import * as debug from '../gui/gui'
 import * as loader from '../loader'
-import * as helper from '../debug/helper'
+import * as helper from '../gui/helper'
 
 const CANVAS_ID = 'scene'
 let ambientLight: AmbientLight

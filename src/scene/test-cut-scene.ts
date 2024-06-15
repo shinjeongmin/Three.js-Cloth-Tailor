@@ -7,7 +7,7 @@ import '../style-sheets/style.css'
 import Cloth from "../cloth"
 import {initInputEvents} from '../managers/input-manager'
 import * as mode from '../managers/mode-manager'
-import * as gui from "../debug/debug-gui"
+import * as gui from "../gui/gui"
 import * as raycast from '../raycast'
 
 const CANVAS_ID = 'scene'

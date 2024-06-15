@@ -7,7 +7,7 @@ import '../style-sheets/style.css'
 import Cloth from "../cloth"
 import {initInputEvents} from '../managers/input-manager'
 import {stateStop} from '../managers/mode-manager'
-import * as gui from "../debug/debug-gui"
+import * as gui from "../gui/gui"
 
 const CANVAS_ID = 'scene'
 let ambientLight: AmbientLight

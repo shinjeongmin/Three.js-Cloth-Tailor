@@ -1,7 +1,7 @@
 import { BufferGeometry, Camera, InstancedInterleavedBuffer, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, Ray, Raycaster, Scene, SphereGeometry, Vector2, Vector3 } from "three"
 import * as mode from './managers/mode-manager'
 import { findClosestVertex, findClosestVertexIndex } from "./geometry/vertex-finder"
-import * as gui from "./debug/debug-gui"
+import * as gui from "./gui/gui"
 
 let raycaster = new Raycaster()
 const mouse = new Vector2()
