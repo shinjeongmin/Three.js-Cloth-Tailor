@@ -1,6 +1,6 @@
 import { BufferGeometry, Camera, InstancedInterleavedBuffer, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, Ray, Raycaster, Scene, SphereGeometry, Vector2, Vector3 } from "three"
 import * as mode from './managers/mode-manager'
-import { findClosestVertex, findClosestVertexIndex } from "./debug/vertex-finder"
+import { findClosestVertex, findClosestVertexIndex } from "./geometry/vertex-finder"
 import * as gui from "./debug/debug-gui"
 
 let raycaster = new Raycaster()
@@ -17,7 +17,8 @@ export function init(scene: Scene, camera: Camera): Raycaster{
     }
   }, false)
 
-  const viewInterFunc: ()=>void = ()=>viewIntersectPoint(scene, camera)
+  const viewInterFunc: ()=>void = ()=>viewIntersectPoint(scene, camera) // call when in raycast
+  // const removeVertexFunc: ()=>void = ()=>viewIntersectPoint(scene, camera) // call when in remove
 
   window.addEventListener('mousedown', ()=>{
     if(mode.curMode === "RAYCAST"){
@@ -25,7 +26,9 @@ export function init(scene: Scene, camera: Camera): Raycaster{
       window.addEventListener('mousemove', viewInterFunc, false)
     } 
     else if(mode.curMode === "REMOVE"){
+      // remove clicked vertex
       console.log(getIntersectVertex(scene, camera))
+      window.addEventListener('mousemove', ()=>{}, false)
     }
   }, false)
 
@@ -35,6 +38,8 @@ export function init(scene: Scene, camera: Camera): Raycaster{
       scene.remove(gizmoLine)
     }
     else if(mode.curMode === "REMOVE"){
+      //
+      window.removeEventListener('mousemove', ()=>{}, false)
     }
   }, false)
 
