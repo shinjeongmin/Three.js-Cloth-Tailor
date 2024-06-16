@@ -41,9 +41,9 @@ update()
 
 async function init() {
   // ===== Managers =====
+  initInputEvents()
   mode.init(
     ()=>{ // common
-      initInputEvents()
       raycast.init(scene, camera)
     },
     ()=>{ // NONE
@@ -89,7 +89,7 @@ async function init() {
   let objPath = 'cloth40x40.obj'
   let file = await customOBJLoader.load(objPath)
   cloth40x40Mesh = customOBJLoader.parse(file)
-  cloth40x40Mesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
+  cloth40x40Mesh.material = new MeshStandardMaterial({ color: 'red', wireframe: true, side:2})
   //#endregion
 
   //#region cloth onepiece object
@@ -118,10 +118,10 @@ async function init() {
   //#endregion
 
   // modify this code to change object model
-  // currentMesh = cloth40x40Mesh
+  currentMesh = cloth40x40Mesh
   // currentMesh = clothOnepieceMesh
   // currentMesh = cubeMesh
-  currentMesh = planeMesh
+  // currentMesh = planeMesh
   scene.add(currentMesh)
   
   cloth = new Cloth(currentMesh, thickness, false)

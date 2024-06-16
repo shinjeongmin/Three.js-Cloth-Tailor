@@ -2,7 +2,7 @@ import { BufferGeometry, Camera, InstancedInterleavedBuffer, Line, LineBasicMate
 import * as mode from './managers/mode-manager'
 import { findClosestVertex, findClosestVertexIndex } from "./geometry/vertex-finder"
 import * as gui from "./gui/gui"
-import { removeVertex } from "./geometry/vertex-remover"
+import { removeFace } from "./geometry/vertex-remover"
 
 let raycaster = new Raycaster()
 const mouse = new Vector2()
@@ -32,7 +32,7 @@ export function init(scene: Scene, camera: Camera): Raycaster{
       // remove clicked vertex
       const clickMesh: Mesh = getIntersectObject(scene, camera)!
       const vertexIndex = getIntersectVertex(scene, camera)[0]
-      if(clickMesh !== null) removeVertex(clickMesh, vertexIndex)
+      if(clickMesh !== null) removeFace(clickMesh, vertexIndex)
       window.addEventListener('mousemove', ()=>{}, false) // keep remove when mouse down
     }
   }, false)
