@@ -19,7 +19,11 @@ export function init(scene: Scene, camera: Camera): Raycaster{
   }, false)
 
   const viewInterFunc: ()=>void = ()=>viewIntersectPoint(scene, camera) // call when in raycast
-  // const removeVertexFunc: ()=>void = ()=>viewIntersectPoint(scene, camera) // call when in remove
+  const removeVertexFunc: ()=>void = ()=>{ // call when in remove
+    const clickMesh: Mesh = getIntersectObject(scene, camera)!
+    const vertexIndex = getIntersectVertex(scene, camera)[0]
+    if(clickMesh !== null) removeFace(clickMesh, vertexIndex)
+  } 
 
   window.addEventListener('mousedown', ()=>{
     if(mode.curMode === "RAYCAST"){
@@ -30,10 +34,7 @@ export function init(scene: Scene, camera: Camera): Raycaster{
     } 
     else if(mode.curMode === "REMOVE"){
       // remove clicked vertex
-      const clickMesh: Mesh = getIntersectObject(scene, camera)!
-      const vertexIndex = getIntersectVertex(scene, camera)[0]
-      if(clickMesh !== null) removeFace(clickMesh, vertexIndex)
-      window.addEventListener('mousemove', ()=>{}, false) // keep remove when mouse down
+      window.addEventListener('mousemove', removeVertexFunc, false) // keep remove when mouse down
     }
   }, false)
 
@@ -43,8 +44,7 @@ export function init(scene: Scene, camera: Camera): Raycaster{
       scene.remove(gizmoLine)
     }
     else if(mode.curMode === "REMOVE"){
-      //
-      window.removeEventListener('mousemove', ()=>{}, false)
+      window.removeEventListener('mousemove', removeVertexFunc, false)
     }
   }, false)
 
