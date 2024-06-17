@@ -7,7 +7,7 @@ import * as THREE from 'three'
  * geometry position에서 vertex 정보를 제거하지는 않는 함수이다 
  * 그래서 실제로는 존재하는 vertex를 mesh face에서만 제거하는 방식
  */
-export function removeFace(mesh: THREE.Mesh, rmIdx: number){
+export function removeFace(mesh: THREE.Mesh, rmIdx: number): THREE.BufferGeometry{
   const meshAttribute = mesh.geometry.attributes
   const meshIndex = mesh.geometry.index
 
@@ -35,10 +35,13 @@ export function removeFace(mesh: THREE.Mesh, rmIdx: number){
   // convert number[][] to float32array
   newIndices = newFaceList.reduce((acc, val) => acc.concat(val), [])
   const geometry = new THREE.BufferGeometry()
+
   geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(posArr), 3))
   geometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normArr), 3))
   geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvArr), 2))
   geometry.setIndex(new THREE.BufferAttribute(new Uint32Array(newIndices), 1))
 
   mesh.geometry = geometry
+
+  return geometry
 }
