@@ -21,8 +21,10 @@ export function init(scene: Scene, camera: Camera): Raycaster{
   const viewInterFunc: ()=>void = ()=>viewIntersectPoint(scene, camera) // call when in raycast
   const removeVertexFunc: ()=>void = ()=>{ // call when in remove
     const clickMesh: Mesh = getIntersectObject(scene, camera)!
-    const vertexIndex = getIntersectVertex(scene, camera)[0]
-    if(clickMesh !== null) removeFace(clickMesh, vertexIndex)
+    if(clickMesh !== null) {
+      const vertexIndex = getIntersectVertex(scene, camera)[0]
+      removeFace(clickMesh, vertexIndex)
+    }
   } 
 
   window.addEventListener('mousedown', ()=>{
