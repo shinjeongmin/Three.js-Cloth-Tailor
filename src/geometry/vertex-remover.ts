@@ -21,7 +21,6 @@ export function removeFace(mesh: THREE.Mesh, rmIdx: number){
     throw new Error('Geometry must have an index.')
   }
 
-  console.log(idxArr)
   const faceList = []
   for(let i=0; i<idxArr.length; i+=3){
     faceList.push([idxArr[i], idxArr[i+1], idxArr[i+2]]) // face 하나에 index 3개
@@ -32,20 +31,14 @@ export function removeFace(mesh: THREE.Mesh, rmIdx: number){
       newFaceList.push(faceList[i])
     }
   }
-  console.log(`new : `)
-  console.log(newFaceList)
 
   // convert number[][] to float32array
   newIndices = newFaceList.reduce((acc, val) => acc.concat(val), [])
-  console.log(newIndices)
   const geometry = new THREE.BufferGeometry()
   geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(posArr), 3))
   geometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normArr), 3))
   geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvArr), 2))
   geometry.setIndex(new THREE.BufferAttribute(new Uint32Array(newIndices), 1))
-
-  console.log(mesh.geometry)
-  console.log(geometry)
 
   mesh.geometry = geometry
 }
