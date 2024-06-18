@@ -2,19 +2,19 @@ export type Mode = "NONE" | "RAYCAST" | "REMOVE_VERTEX"
 export const Modes: Mode[] = ["NONE", "RAYCAST", "REMOVE_VERTEX"]
 
 export let stateSimulation:boolean = false
-export let curMode: Mode = "REMOVE_VERTEX"
+export let curMode: Mode = "NONE"
 let changeModeEvent: Function
 let changeModeEventNONE: Function
 let changeModeEventRAYCAST: Function
 let changeModeEventREMOVE: Function
 
-export function init(func: Function, noneFunc: Function, raycastFunc: Function, removeFunc: Function){
+export function init(func: Function, noneFunc: Function, raycastFunc: Function, removeFunc: Function, mode: Mode = curMode){
   changeModeEvent = func
   changeModeEventNONE = noneFunc
   changeModeEventRAYCAST = raycastFunc
   changeModeEventREMOVE = removeFunc
   
-  changeMode(curMode)
+  changeMode(mode)
 }
 export function changeSimulateState(){ stateSimulation = !stateSimulation }
 export function changeMode(mode: Mode){ 

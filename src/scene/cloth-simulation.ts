@@ -6,8 +6,10 @@ import CustomOBJLoader, { loadOBJ } from '../loader'
 import '../style-sheets/style.css'
 import Cloth from "../cloth"
 import {initInputEvents} from '../managers/input-manager'
-import {stateStop} from '../managers/mode-manager'
+import * as mode from '../managers/mode-manager'
 import * as gui from "../gui/gui"
+import * as raycast from '../raycast'
+
 
 const CANVAS_ID = 'scene'
 let ambientLight: AmbientLight
@@ -32,14 +34,29 @@ const steps = 10
 const sdt = dt / steps
 const gravity = new Float32Array([-1.1, -9.8, 2.5])
 
-const floorHeight = -1
+const floorHeight = -1.5
 
 await init()
 update()
 
 async function init() {
   // ===== Managers =====
-  initInputEvents()
+  initInputEvents(simulationStart)
+  mode.init(
+    ()=>{ // common
+      raycast.init(scene, camera)
+    },
+    ()=>{ // NONE
+      cameraControls.enabled = true
+    },
+    ()=>{ // RAYCAST
+      cameraControls.enabled = false
+    },
+    ()=>{ // REMOVE
+      cameraControls.enabled = false
+    },
+    "NONE"
+  )
 
   // ===== 💡 LIGHTS =====
   {
@@ -72,7 +89,6 @@ async function init() {
   let file = await customOBJLoader.load(objPath)
   cloth40x40Mesh = customOBJLoader.parse(file)
   cloth40x40Mesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
-  cloth40x40Mesh.position.set(0,0.5,0)
   cloth40x40Mesh.scale.set(0.5,0.5,0.5)
   //#endregion
 
@@ -108,20 +124,31 @@ async function init() {
   // currentMesh = cubeMesh
   // currentMesh = planeMesh
   scene.add(currentMesh)
-  
-  cloth = new Cloth(currentMesh, thickness, true)
-
-  cloth.registerDistanceConstraint(0.0)
-  cloth.registerPerformantBendingConstraint(1.0)
-  cloth.registerSelfCollision()
-  // cloth.registerIsometricBendingConstraint(10.0)
-
-  // set floor height
-  cloth.setFloorHeight(floorHeight)
 
   // debugger
   gui.init()
   gui.vertexViewer(currentMesh, scene)
+}
+
+async function update() {
+  await requestAnimationFrame(update)
+
+  //#region simulation
+  if(mode.stateSimulation) {
+    physicsSimulation()
+  }
+  //#endregion
+
+  if (resizeRendererToDisplaySize(renderer)) {
+    const canvas = renderer.domElement
+    camera.aspect = canvas.clientWidth / canvas.clientHeight
+    camera.updateProjectionMatrix()
+  }
+
+  cameraControls.update()
+  gui.updatePositionGuiWithMesh(currentMesh)
+
+  renderer.render(scene, camera)
 }
 
 function physicsSimulation(){
@@ -141,21 +168,15 @@ function physicsSimulation(){
 
 }
 
-async function update() {
-  await requestAnimationFrame(update)
+function simulationStart(){
+  console.log('simul')
+  cloth = new Cloth(currentMesh, thickness, true)
 
-  //#region simulation
-  if(!stateStop) physicsSimulation()
-  //#endregion
+  cloth.registerDistanceConstraint(0.0)
+  cloth.registerPerformantBendingConstraint(1.0)
+  cloth.registerSelfCollision()
+  // cloth.registerIsometricBendingConstraint(10.0)
 
-  if (resizeRendererToDisplaySize(renderer)) {
-    const canvas = renderer.domElement
-    camera.aspect = canvas.clientWidth / canvas.clientHeight
-    camera.updateProjectionMatrix()
-  }
-
-  cameraControls.update()
-  gui.updatePositionGuiWithMesh(currentMesh)
-
-  renderer.render(scene, camera)
+  // set floor height
+  cloth.setFloorHeight(floorHeight)
 }

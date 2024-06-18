@@ -55,6 +55,7 @@ async function init() {
     ()=>{ // REMOVE
       cameraControls.enabled = false
     },
+    "REMOVE_VERTEX"
   )
 
   // ===== 💡 LIGHTS =====
