@@ -190,6 +190,12 @@ export default abstract class PhysicsObject {
       const e0 = edges[i];
       const e1 = edges[i + 1];
 
+      // catch exception: if edges length is odd
+      if(edges.length <= i+1) {
+        i+=2
+        continue
+      }
+      
       // If the particles share the same edge, update the neighbors list
       // with their neighbors corresponding global edge number
       if (e0.id0 === e1.id0 && e0.id1 === e1.id1) {
