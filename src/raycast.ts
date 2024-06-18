@@ -34,7 +34,7 @@ export function init(scene: Scene, camera: Camera): Raycaster{
       const vertexIndex = getIntersectVertex(scene, camera)[0]
       console.log(vertexIndex)
     } 
-    else if(mode.curMode === "REMOVE"){
+    else if(mode.curMode === "REMOVE_VERTEX"){
       // remove clicked vertex
       window.addEventListener('mousemove', removeVertexFunc, false) // keep remove when mouse down
     }
@@ -45,7 +45,7 @@ export function init(scene: Scene, camera: Camera): Raycaster{
       window.removeEventListener('mousemove', viewInterFunc, false)
       scene.remove(gizmoLine)
     }
-    else if(mode.curMode === "REMOVE"){
+    else if(mode.curMode === "REMOVE_VERTEX"){
       window.removeEventListener('mousemove', removeVertexFunc, false)
     }
   }, false)
