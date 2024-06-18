@@ -34,14 +34,14 @@ const steps = 10
 const sdt = dt / steps
 const gravity = new Float32Array([-1.1, -9.8, 2.5])
 
-const floorHeight = -1
+const floorHeight = -1.5
 
 await init()
 update()
 
 async function init() {
   // ===== Managers =====
-  initInputEvents()
+  initInputEvents(simulationStart)
   mode.init(
     ()=>{ // common
       raycast.init(scene, camera)
@@ -123,21 +123,36 @@ async function init() {
   // currentMesh = cubeMesh
   // currentMesh = planeMesh
   scene.add(currentMesh)
-  
-  cloth = new Cloth(currentMesh, thickness, false)
-
-  cloth.registerDistanceConstraint(0.0)
-  cloth.registerPerformantBendingConstraint(1.0)
-  cloth.registerSelfCollision()
-  // cloth.registerIsometricBendingConstraint(10.0)
-
-  // set floor height
-  cloth.setFloorHeight(floorHeight)
+  currentMesh.translateY(.5)
 
   // debugger
   gui.init()
   gui.vertexViewer(currentMesh, scene)
   gui.changeMode()
+}
+
+async function update() {
+  await requestAnimationFrame(update)
+
+  //#region simulation
+  if(mode.stateSimulation) {
+    physicsSimulation()
+  }
+  //#endregion
+
+  if (resizeRendererToDisplaySize(renderer)) {
+    const canvas = renderer.domElement
+    camera.aspect = canvas.clientWidth / canvas.clientHeight
+    camera.updateProjectionMatrix()
+  }
+
+  cameraControls.update()
+
+  if(mode.curMode === "NONE") gui.updatePositionGuiWithMesh(currentMesh)
+
+  currentMesh.geometry.computeBoundingSphere()
+
+  renderer.render(scene, camera)
 }
 
 function physicsSimulation(){
@@ -157,24 +172,15 @@ function physicsSimulation(){
 
 }
 
-async function update() {
-  await requestAnimationFrame(update)
+function simulationStart(){
+  console.log('simul')
+  cloth = new Cloth(currentMesh, thickness, true)
 
-  //#region simulation
-  if(!mode.stateStop) physicsSimulation()
-  //#endregion
+  cloth.registerDistanceConstraint(0.0)
+  cloth.registerPerformantBendingConstraint(1.0)
+  cloth.registerSelfCollision()
+  // cloth.registerIsometricBendingConstraint(10.0)
 
-  if (resizeRendererToDisplaySize(renderer)) {
-    const canvas = renderer.domElement
-    camera.aspect = canvas.clientWidth / canvas.clientHeight
-    camera.updateProjectionMatrix()
-  }
-
-  cameraControls.update()
-
-  if(mode.curMode === "NONE") gui.updatePositionGuiWithMesh(currentMesh)
-
-  currentMesh.geometry.computeBoundingSphere()
-
-  renderer.render(scene, camera)
+  // set floor height
+  cloth.setFloorHeight(floorHeight)
 }
