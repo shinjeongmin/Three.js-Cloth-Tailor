@@ -13,7 +13,7 @@ export function init(scene: Scene, camera: Camera): Raycaster{
   window.addEventListener('mousemove', ()=>{
     if(mode.curMode !== "RAYCAST") {scene.remove(gizmoLine)}
     
-    if(mode.curMode === "REMOVE"){
+    if(mode.curMode === "REMOVE_VERTEX"){
       window.addEventListener('mousemove', viewInterFunc, false)
     }
   }, false)

@@ -1,8 +1,8 @@
-export type Mode = "NONE" | "RAYCAST" | "REMOVE"
-export const Modes: Mode[] = ["NONE", "RAYCAST", "REMOVE"]
+export type Mode = "NONE" | "RAYCAST" | "REMOVE_VERTEX"
+export const Modes: Mode[] = ["NONE", "RAYCAST", "REMOVE_VERTEX"]
 
 export let stateSimulation:boolean = false
-export let curMode: Mode = "REMOVE"
+export let curMode: Mode = "REMOVE_VERTEX"
 let changeModeEvent: Function
 let changeModeEventNONE: Function
 let changeModeEventRAYCAST: Function
@@ -26,7 +26,7 @@ export function changeMode(mode: Mode){
   else if(curMode === "RAYCAST"){
     changeModeEventRAYCAST()
   }
-  else if(curMode === "REMOVE"){
+  else if(curMode === "REMOVE_VERTEX"){
     changeModeEventREMOVE()
   }
 }
