@@ -52,10 +52,13 @@ async function init() {
     ()=>{ // RAYCAST
       cameraControls.enabled = false
     },
-    ()=>{ // REMOVE
+    ()=>{ // REMOVE_VERTEX
       cameraControls.enabled = false
     },
-    "REMOVE_VERTEX"
+    ()=>{ // REMOVE_EDGE
+      cameraControls.enabled = false
+    },
+    "REMOVE_EDGE"
   )
 
   // ===== 💡 LIGHTS =====

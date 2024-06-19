@@ -1,19 +1,22 @@
-export type Mode = "NONE" | "RAYCAST" | "REMOVE_VERTEX"
-export const Modes: Mode[] = ["NONE", "RAYCAST", "REMOVE_VERTEX"]
+export type Mode = "NONE" | "RAYCAST" | "REMOVE_VERTEX" | "REMOVE_EDGE"
+export const Modes: Mode[] = ["NONE", "RAYCAST", "REMOVE_VERTEX","REMOVE_EDGE"]
 
 export let stateSimulation:boolean = false
 export let curMode: Mode = "NONE"
 let changeModeEvent: Function
 let changeModeEventNONE: Function
 let changeModeEventRAYCAST: Function
-let changeModeEventREMOVE: Function
+let changeModeEventREMOVE_VERTEX: Function
+let changeModeEventREMOVE_EDGE: Function
 
-export function init(func: Function, noneFunc: Function, raycastFunc: Function, removeFunc: Function, mode: Mode = curMode){
+export function init(func: Function, noneFunc: Function, raycastFunc: Function,
+  removeVertexFunc: Function, removeEdgeFunc: Function, mode: Mode = curMode) {
   changeModeEvent = func
   changeModeEventNONE = noneFunc
   changeModeEventRAYCAST = raycastFunc
-  changeModeEventREMOVE = removeFunc
-  
+  changeModeEventREMOVE_VERTEX = removeVertexFunc
+  changeModeEventREMOVE_EDGE = removeEdgeFunc
+
   changeMode(mode)
 }
 export function changeSimulateState(){ stateSimulation = !stateSimulation }
@@ -27,6 +30,9 @@ export function changeMode(mode: Mode){
     changeModeEventRAYCAST()
   }
   else if(curMode === "REMOVE_VERTEX"){
-    changeModeEventREMOVE()
+    changeModeEventREMOVE_VERTEX()
+  }
+  else if(curMode === "REMOVE_EDGE"){
+    changeModeEventREMOVE_EDGE()
   }
 }
