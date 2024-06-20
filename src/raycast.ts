@@ -13,7 +13,10 @@ let cuttingVertexIndexList: number[] = []
 export function init(scene: Scene, camera: Camera): Raycaster{
   window.addEventListener('mousemove', onMouseMove, false)
   window.addEventListener('mousemove', ()=>{
-    if(mode.curMode !== "RAYCAST" && mode.curMode !== "REMOVE_EDGE") {scene.remove(gizmoLine)}
+    if(mode.curMode !== "RAYCAST" && mode.curMode !== "REMOVE_EDGE") {
+      scene.remove(gizmoLine)
+      console.log(`remove gizmo`)
+    }
     
     if(mode.curMode === "REMOVE_VERTEX"){
       window.addEventListener('mousemove', viewInterFunc, false)
@@ -62,7 +65,7 @@ export function init(scene: Scene, camera: Camera): Raycaster{
     else if(mode.curMode === "REMOVE_EDGE"){
       window.removeEventListener('mousemove', stackClickVertexIndexFunc, false)
       scene.remove(gizmoLine)
-      console.log(cuttingVertexIndexList)
+      // TODO: add cut along the edge this line
     }
   }, false)
 
