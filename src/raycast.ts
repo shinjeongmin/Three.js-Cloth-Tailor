@@ -3,6 +3,7 @@ import * as mode from './managers/mode-manager'
 import { findClosestVertex, findClosestVertexIndex } from "./geometry/vertex-finder"
 import * as gui from "./gui/gui"
 import { removeFace } from "./geometry/vertex-remover"
+import { edgeCut } from "./geometry/mesh-edge-cutter"
 
 let raycaster = new Raycaster()
 const mouse = new Vector2()
@@ -65,7 +66,12 @@ export function init(scene: Scene, camera: Camera): Raycaster{
     else if(mode.curMode === "REMOVE_EDGE"){
       window.removeEventListener('mousemove', stackClickVertexIndexFunc, false)
       scene.remove(gizmoLine)
-      // TODO: add cut along the edge this line
+      
+      const clickMesh: Mesh = getIntersectObject(scene, camera)!
+      // if not null cut along the edge
+      if(clickMesh !== undefined && clickMesh !== null){
+        edgeCut(clickMesh, cuttingVertexIndexList)
+      } 
     }
   }, false)
 

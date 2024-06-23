@@ -6,7 +6,7 @@ import * as mode from '../managers/mode-manager'
 export let gui: GUI
 let target = {
   index: 0,
-  max: 300,
+  max: 2000,
   position :{
     x: 0,
     y: 0,
