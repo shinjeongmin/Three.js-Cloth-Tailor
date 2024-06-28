@@ -1,28 +1,13 @@
 # Three.js Cloth Tailor
 
-## Stuff included in the `scene.ts`
+## Cloth Physical Based Dynamics simulation
+![PBD simulation](readme-image/cloth-pbd-simulation.gif)
 
-- [x] Geometry
-- [x] Material
-- [x] Mesh
-- [x] Ambient Light
-- [x] Point Light
-- [x] Camera
-- [x] Scene
-- [x] Canvas
-- [x] Renderer (WebGL)
-- [x] Loading Manager
-- [x] Orbit Controls
-- [x] Drag Controls
-- [x] Grid
-- [x] Antialias enabled
-- [x] Transparent canvas
-- [x] Responsive renderer and camera (to canvas size)
-- [x] Animation Loop
-- [x] Shadows
-- [x] Stats (FPS, ms)
-- [x] Full screen (double-click on canvas)
-- [x] Debug GUI
+## Remove vertex mode
+![Remove Vertex Mode](readme-image/cloth-remove-vertex.gif)
+
+## Remove edge(Cut along with edge) mode
+![Remove Edge Mode](readme-image/cloth-remove-edge.gif)
 
 ## Tech Stack
 
@@ -55,3 +40,9 @@ Run build
 ```bash
 npm run preview
 ```
+
+Test Start
+```bash
+npm vite
+```
+(if you install vite to local directory you need to use npx)
