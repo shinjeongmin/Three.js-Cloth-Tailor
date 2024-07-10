@@ -16,7 +16,6 @@ export function init(scene: Scene, camera: Camera): Raycaster{
   window.addEventListener('mousemove', ()=>{
     if(mode.curMode !== "RAYCAST" && mode.curMode !== "REMOVE_EDGE") {
       scene.remove(gizmoLine)
-      console.log(`remove gizmo`)
     }
     
     if(mode.curMode === "REMOVE_VERTEX"){
@@ -41,7 +40,6 @@ export function init(scene: Scene, camera: Camera): Raycaster{
       viewInterFunc()
       window.addEventListener('mousemove', viewInterFunc, false)
       const vertexIndex = getIntersectVertex(scene, camera)[0]
-      console.log(vertexIndex)
     } 
     else if(mode.curMode === "REMOVE_VERTEX"){
       // remove clicked vertex
@@ -201,7 +199,6 @@ function drawLineVertexIndexList(scene: Scene, vecList: Vector3[]){
   })
 
   let geometry = new BufferGeometry().setFromPoints(vecList)
-  console.log(vecList)
 
   gizmoLine.geometry = geometry
   gizmoLine.material = material
