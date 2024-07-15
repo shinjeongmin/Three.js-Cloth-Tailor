@@ -8,68 +8,84 @@ import { edgeCut } from "./geometry/mesh-edge-cutter"
 let raycaster = new Raycaster()
 const mouse = new Vector2()
 let gizmoLine: Line = new Line()
+let isMouseDown: boolean = false;
 
 let cuttingVertexIndexList: number[] = []
 
 export function init(scene: Scene, camera: Camera): Raycaster{
-  window.addEventListener('mousemove', onMouseMove, false)
-  window.addEventListener('mousemove', ()=>{
-    if(mode.curMode !== "RAYCAST" && mode.curMode !== "REMOVE_EDGE") {
-      scene.remove(gizmoLine)
-    }
-    
-    if(mode.curMode === "REMOVE_VERTEX"){
-      window.addEventListener('mousemove', viewInterFunc, false)
+  // set mouse status
+  window.addEventListener('mousedown', ()=>{isMouseDown = true}, false)
+  window.addEventListener('mouseup', ()=>{isMouseDown = false}, false)
+  
+  window.addEventListener('mousemove', (event)=>{
+    onMouseMove(event)
+    switch(mode.curMode){
+      case "NONE": break;
+      case "RAYCAST":
+        viewIntersectPoint(scene, camera)
+        break;
+      case "REMOVE_VERTEX":
+        if(isMouseDown){
+          viewIntersectPoint(scene, camera)
+
+          // remove clicked vertex
+          const clickMesh: Mesh = getIntersectObject(scene, camera)!
+          if(clickMesh !== null) {
+            const vertexIndex = getIntersectVertex(scene, camera)[0]
+            removeFace(clickMesh, vertexIndex)
+          }
+        }
+        break;
+      case "REMOVE_EDGE": 
+        if(isMouseDown){
+          console.log('removing edge')
+          stackClickVertexIndex(scene, camera)
+        }
+        break;
+      default: break;
     }
   }, false)
 
-  const viewInterFunc: ()=>void = ()=>viewIntersectPoint(scene, camera) // call when in raycast
-  const removeVertexFunc: ()=>void = ()=>{ // call when in remove
-    const clickMesh: Mesh = getIntersectObject(scene, camera)!
-    if(clickMesh !== null) {
-      const vertexIndex = getIntersectVertex(scene, camera)[0]
-      const removedGeometry = removeFace(clickMesh, vertexIndex)
-    }
-  } 
-  const stackClickVertexIndexFunc: ()=>void = ()=>{
-    stackClickVertexIndex(scene, camera)
-  }
-
-  window.addEventListener('mousedown', ()=>{
-    if(mode.curMode === "RAYCAST"){
-      viewInterFunc()
-      window.addEventListener('mousemove', viewInterFunc, false)
-      const vertexIndex = getIntersectVertex(scene, camera)[0]
-    } 
-    else if(mode.curMode === "REMOVE_VERTEX"){
-      // remove clicked vertex
-      removeVertexFunc() // function execute when even clicked
-      window.addEventListener('mousemove', removeVertexFunc, false) // keep remove when mouse down
-      }
-    else if(mode.curMode === "REMOVE_EDGE"){
-      cuttingVertexIndexList = [] // initialize vertex index list
-      stackClickVertexIndexFunc() // function execute when even clicked
-      window.addEventListener('mousemove', stackClickVertexIndexFunc, false)
+  window.addEventListener('mousedown', (event)=>{
+    switch(mode.curMode){
+      case "NONE": break;
+      case "RAYCAST": break;
+      case "REMOVE_VERTEX":
+        viewIntersectPoint(scene, camera)
+          
+        // remove clicked vertex
+        const clickMesh: Mesh = getIntersectObject(scene, camera)!
+        if(clickMesh !== null) {
+          const vertexIndex = getIntersectVertex(scene, camera)[0]
+          removeFace(clickMesh, vertexIndex)
+        }
+        break;
+      case "REMOVE_EDGE": 
+        cuttingVertexIndexList = [] // initialize vertex index list
+        break;
+      default: break;
     }
   }, false)
 
-  window.addEventListener('mouseup', ()=>{ 
-    if(mode.curMode === "RAYCAST"){
-      window.removeEventListener('mousemove', viewInterFunc, false)
-      scene.remove(gizmoLine)
-    }
-    else if(mode.curMode === "REMOVE_VERTEX"){
-      window.removeEventListener('mousemove', removeVertexFunc, false)
-    }
-    else if(mode.curMode === "REMOVE_EDGE"){
-      window.removeEventListener('mousemove', stackClickVertexIndexFunc, false)
-      scene.remove(gizmoLine)
-      
-      const clickMesh: Mesh = getIntersectObject(scene, camera)!
-      // if not null cut along the edge
-      if(clickMesh !== undefined && clickMesh !== null){
-        edgeCut(clickMesh, cuttingVertexIndexList)
-      } 
+  window.addEventListener('mouseup', (event)=>{
+    switch(mode.curMode){
+      case "NONE": break;
+      case "RAYCAST":
+        scene.remove(gizmoLine)
+        break;
+      case "REMOVE_VERTEX":
+        scene.remove(gizmoLine)
+        break;
+      case "REMOVE_EDGE":
+        const clickMesh: Mesh = getIntersectObject(scene, camera)!
+        // if not null cut along the edge
+        if(clickMesh !== undefined && clickMesh !== null){
+          edgeCut(clickMesh, cuttingVertexIndexList)
+        }
+        scene.remove(gizmoLine)
+        break;
+      default:
+        break;
     }
   }, false)
 
@@ -80,6 +96,12 @@ function onMouseMove(event: MouseEvent) {
   // Normalize mouse coordinates to -1 to 1 range
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1
   mouse.y = - (event.clientY / window.innerHeight) * 2 + 1
+}
+
+export function modeChangeEvent(scene: Scene, camera: Camera){
+  if(mode.curMode !== "RAYCAST" && mode.curMode !== "REMOVE_EDGE") {
+    scene.remove(gizmoLine)
+  }
 }
 
 function getIntersectObject(scene: Scene, camera: Camera): Mesh | null{

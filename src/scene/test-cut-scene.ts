@@ -42,9 +42,10 @@ update()
 async function init() {
   // ===== Managers =====
   initInputEvents(simulationStart)
+  raycast.init(scene, camera)
   mode.init(
     ()=>{ // common
-      raycast.init(scene, camera)
+      raycast.modeChangeEvent(scene, camera)
     },
     ()=>{ // NONE
       cameraControls.enabled = true
