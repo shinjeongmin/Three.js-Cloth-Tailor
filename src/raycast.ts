@@ -82,7 +82,7 @@ export function init(scene: Scene, camera: Camera): Raycaster{
 
         console.log(`current mesh : `, clickMesh)
         if(clickMesh) {
-          separateMesh(clickMesh)
+          separateMesh(scene, clickMesh)
           console.log(`separate after`, scene.children)
         }
         break;
