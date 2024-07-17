@@ -178,7 +178,6 @@ function physicsSimulation(){
 }
 
 function simulationStart(){
-  console.log('simul')
   cloth = new Cloth(currentMesh, thickness, true)
 
   cloth.registerDistanceConstraint(0.0)

@@ -4,12 +4,14 @@ import { findClosestVertex, findClosestVertexIndex } from "./geometry/vertex-fin
 import * as gui from "./gui/gui"
 import { removeFace } from "./geometry/vertex-remover"
 import { edgeCut } from "./geometry/mesh-edge-cutter"
+import {separateMesh} from "./geometry/mesh-separator"
 
 let raycaster = new Raycaster()
 const mouse = new Vector2()
 let gizmoLine: Line = new Line()
 let isMouseDown: boolean = false;
 
+let clickMesh: Mesh | null = null
 let cuttingVertexIndexList: number[] = []
 
 export function init(scene: Scene, camera: Camera): Raycaster{
@@ -29,7 +31,7 @@ export function init(scene: Scene, camera: Camera): Raycaster{
           viewIntersectPoint(scene, camera)
 
           // remove clicked vertex
-          const clickMesh: Mesh = getIntersectObject(scene, camera)!
+          clickMesh = getIntersectObject(scene, camera)!
           if(clickMesh !== null) {
             const vertexIndex = getIntersectVertex(scene, camera)[0]
             removeFace(clickMesh, vertexIndex)
@@ -54,7 +56,7 @@ export function init(scene: Scene, camera: Camera): Raycaster{
         viewIntersectPoint(scene, camera)
           
         // remove clicked vertex
-        const clickMesh: Mesh = getIntersectObject(scene, camera)!
+        clickMesh = getIntersectObject(scene, camera)!
         if(clickMesh !== null) {
           const vertexIndex = getIntersectVertex(scene, camera)[0]
           removeFace(clickMesh, vertexIndex)
@@ -75,14 +77,19 @@ export function init(scene: Scene, camera: Camera): Raycaster{
         break;
       case "REMOVE_VERTEX":
         scene.remove(gizmoLine)
+
+        clickMesh = getIntersectObject(scene, camera)!
+        // separateMesh(clickMesh)
         break;
       case "REMOVE_EDGE":
-        const clickMesh: Mesh = getIntersectObject(scene, camera)!
+        clickMesh = getIntersectObject(scene, camera)!
         // if not null cut along the edge
         if(clickMesh !== undefined && clickMesh !== null){
           edgeCut(clickMesh, cuttingVertexIndexList)
         }
         scene.remove(gizmoLine)
+
+        // separateMesh(clickMesh)
         break;
       default:
         break;
@@ -185,7 +192,7 @@ function getIntersectVertex(scene: Scene, camera: Camera): number[]{
 function stackClickVertexIndex(scene: Scene, camera: Camera){
   raycaster.setFromCamera(mouse, camera)
   const intersects = raycaster.intersectObjects(scene.children)
-  const clickMesh: Mesh = getIntersectObject(scene, camera)!
+  clickMesh = getIntersectObject(scene, camera)!
 
   if (intersects.length > 0) {
     for(let i = 0; i < intersects.length; i++){
