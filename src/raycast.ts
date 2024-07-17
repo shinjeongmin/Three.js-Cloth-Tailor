@@ -31,8 +31,10 @@ export function init(scene: Scene, camera: Camera): Raycaster{
           viewIntersectPoint(scene, camera)
 
           // remove clicked vertex
-          clickMesh = getIntersectObject(scene, camera)!
-          if(clickMesh !== null) {
+          const intersectObject = getIntersectObject(scene, camera)!
+          if(intersectObject !== null &&
+            intersectObject !== undefined) {
+            clickMesh = intersectObject!
             const vertexIndex = getIntersectVertex(scene, camera)[0]
             removeFace(clickMesh, vertexIndex)
           }
@@ -78,8 +80,11 @@ export function init(scene: Scene, camera: Camera): Raycaster{
       case "REMOVE_VERTEX":
         scene.remove(gizmoLine)
 
-        clickMesh = getIntersectObject(scene, camera)!
-        // separateMesh(clickMesh)
+        console.log(`current mesh : `, clickMesh)
+        if(clickMesh) {
+          separateMesh(clickMesh)
+          console.log(`separate after`, scene.children)
+        }
         break;
       case "REMOVE_EDGE":
         clickMesh = getIntersectObject(scene, camera)!

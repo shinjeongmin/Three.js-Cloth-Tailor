@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-export function separateMesh(mesh: THREE.Mesh){
+export function separateMesh(scene: THREE.Scene, mesh: THREE.Mesh){
   // BufferGeometry의 속성 추출
   const positionAttribute = mesh.geometry.getAttribute('position') as THREE.BufferAttribute;
   const indexAttribute = mesh.geometry.getIndex() as THREE.BufferAttribute;
@@ -71,6 +71,8 @@ export function separateMesh(mesh: THREE.Mesh){
       }
   }
 
+  console.log(`분리된 mesh 개수 : `, groups.length)
+
   // 각 그룹을 새로운 BufferGeometry로 분리
   const separatedGeometries = groups.map(group => {
       const newGeometry = new THREE.BufferGeometry();
@@ -98,5 +100,8 @@ export function separateMesh(mesh: THREE.Mesh){
       return newGeometry;
   });
 
-  return separatedGeometries;
+  // separatedGeometries.forEach(geometry =>{
+  //   const newMesh: THREE.Mesh = mesh.clone();
+  //   scene.add()
+  // })
 }

@@ -59,7 +59,7 @@ async function init() {
     ()=>{ // REMOVE_EDGE
       cameraControls.enabled = false
     },
-    "REMOVE_EDGE"
+    "REMOVE_VERTEX"
   )
 
   // ===== 💡 LIGHTS =====
@@ -95,6 +95,7 @@ async function init() {
   let file = await customOBJLoader.load(objPath)
   cloth40x40Mesh = customOBJLoader.parse(file)
   cloth40x40Mesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
+  cloth40x40Mesh.name = 'cloth'
   //#endregion
 
   //#region cloth onepiece object
@@ -170,6 +171,7 @@ function physicsSimulation(){
   }
 
   cloth.updateVertexNormals()
+
 
   // apply vertex position
   currentMesh.geometry.setAttribute('position', new BufferAttribute(new Float32Array(cloth.positions), 3))
