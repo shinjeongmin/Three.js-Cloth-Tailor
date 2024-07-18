@@ -8,8 +8,11 @@ import { ClothPhysicsObject } from "./PBD-simulation/physics-object"
  * It is the user's responsibility to register constraints within the app.
  */
 export default class Cloth extends ClothPhysicsObject {
+  mesh: Mesh
+  
   constructor(mesh: Mesh, thickness: number, vertexFix: boolean) {
     super(mesh, thickness)
+    this.mesh = mesh
     this.init(vertexFix)
   }
 

@@ -21,12 +21,10 @@ const camera = new PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeigh
 camera.position.set(-2, 2.5, 1.5)
 const { cameraControls } = controls.setCameraControl(camera, canvas)
 
-let cloth40x40Mesh: Mesh
-let clothOnepieceMesh: Mesh
-let cubeMesh: Mesh
-let planeMesh: Mesh
-let currentMesh: Mesh
-let cloth:Cloth
+let cloth40x40: Cloth
+let clothOnepiece: Cloth
+let selectedCloth: Cloth
+let simulClothList: Cloth[] = []
 const customOBJLoader = new CustomOBJLoader()
 const thickness: number = 0.05
 const dt = 1.0 / 60.0
@@ -93,47 +91,26 @@ async function init() {
   //#region cloth 40x40 object
   let objPath = 'cloth40x40.obj'
   let file = await customOBJLoader.load(objPath)
-  cloth40x40Mesh = customOBJLoader.parse(file)
-  cloth40x40Mesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
-  cloth40x40Mesh.name = 'cloth'
+  cloth40x40 = new Cloth(customOBJLoader.parse(file), thickness, true)
+  cloth40x40.mesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
+  cloth40x40.mesh.name = 'cloth'
   //#endregion
 
   //#region cloth onepiece object
   objPath = 'onepiece.obj'
   file = await customOBJLoader.load(objPath)
-  clothOnepieceMesh = customOBJLoader.parse(file)
-  clothOnepieceMesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
-  //#endregion
-
-  //#region cube object
-  objPath = 'cube.obj'
-  file = await customOBJLoader.load(objPath)
-  cubeMesh = customOBJLoader.parse(file)
-  cubeMesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
-  cubeMesh.position.set(0,1,0)
-  cubeMesh.scale.set(0.5,0.5,0.5)
-  //#endregion
-
-  //#region plane object
-  objPath = 'plane.obj'
-  file = await customOBJLoader.load(objPath)
-  planeMesh = customOBJLoader.parse(file)
-  planeMesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
-  planeMesh.position.setY(0)
-  planeMesh.name = 'plane'
+  clothOnepiece = new Cloth(customOBJLoader.parse(file), thickness, true)
+  clothOnepiece.mesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
   //#endregion
 
   // modify this code to change object model
-  currentMesh = cloth40x40Mesh
-  // currentMesh = clothOnepieceMesh
-  // currentMesh = cubeMesh
-  // currentMesh = planeMesh
-  scene.add(currentMesh)
-  currentMesh.translateY(.5)
+  scene.add(cloth40x40.mesh)
+  cloth40x40.mesh.translateY(.5)
+  simulClothList.push(cloth40x40)
 
   // debugger
   gui.init()
-  gui.vertexViewer(currentMesh, scene)
+  gui.vertexViewer(cloth40x40.mesh, scene)
   gui.changeMode()
 }
 
@@ -142,7 +119,7 @@ async function update() {
 
   //#region simulation
   if(mode.stateSimulation) {
-    physicsSimulation()
+    physicsSimulation(simulClothList)
   }
   //#endregion
 
@@ -154,39 +131,41 @@ async function update() {
 
   cameraControls.update()
 
-  if(mode.curMode === "NONE") gui.updatePositionGuiWithMesh(currentMesh)
-
-  currentMesh.geometry.computeBoundingSphere()
+  // selected cloth 
+  selectedCloth = cloth40x40 // temporary input cloth40x40
+  if(mode.curMode === "NONE") gui.updatePositionGuiWithMesh(selectedCloth.mesh)
+  selectedCloth.mesh.geometry.computeBoundingSphere()
 
   renderer.render(scene, camera)
 }
 
-function physicsSimulation(){
+function physicsSimulation(clothes: Cloth[]){
   gravity[2] = Math.cos(Date.now() / 2000) * 15.5
-  cloth.preIntegration(sdt)
-  for (let i = 0; i < steps; i++) {
-    cloth.preSolve(sdt, gravity)
-    cloth.solve(sdt)
-    cloth.postSolve(sdt)
-  }
 
-  cloth.updateVertexNormals()
-
-
-  // apply vertex position
-  currentMesh.geometry.setAttribute('position', new BufferAttribute(new Float32Array(cloth.positions), 3))
-  currentMesh.geometry.setAttribute('normal', new BufferAttribute(new Float32Array(cloth.normals), 3))
-
+  clothes.forEach(cloth => {
+    cloth.preIntegration(sdt)
+    for (let i = 0; i < steps; i++) {
+      cloth.preSolve(sdt, gravity)
+      cloth.solve(sdt)
+      cloth.postSolve(sdt)
+    }
+  
+    cloth.updateVertexNormals()
+  
+    // apply vertex position
+    cloth.mesh.geometry.setAttribute('position', new BufferAttribute(new Float32Array(cloth.positions), 3))
+    cloth.mesh.geometry.setAttribute('normal', new BufferAttribute(new Float32Array(cloth.normals), 3))
+  })
 }
 
 function simulationStart(){
-  cloth = new Cloth(currentMesh, thickness, true)
-
-  cloth.registerDistanceConstraint(0.0)
-  cloth.registerPerformantBendingConstraint(1.0)
-  cloth.registerSelfCollision()
-  // cloth.registerIsometricBendingConstraint(10.0)
-
-  // set floor height
-  cloth.setFloorHeight(floorHeight)
+  simulClothList.forEach(cloth => {
+    cloth.registerDistanceConstraint(0.0)
+    cloth.registerPerformantBendingConstraint(1.0)
+    cloth.registerSelfCollision()
+    // cloth.registerIsometricBendingConstraint(10.0)
+  
+    // set floor height
+    cloth.setFloorHeight(floorHeight)
+  })
 }

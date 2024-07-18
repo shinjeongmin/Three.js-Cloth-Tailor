@@ -100,8 +100,13 @@ export function separateMesh(scene: THREE.Scene, mesh: THREE.Mesh){
       return newGeometry;
   });
 
-  // separatedGeometries.forEach(geometry =>{
-  //   const newMesh: THREE.Mesh = mesh.clone();
-  //   scene.add()
-  // })
+  separatedGeometries.forEach((geometry, index) =>{
+    const newMesh: THREE.Mesh = mesh.clone();
+    newMesh.geometry = geometry;
+    newMesh.name = mesh.name + index
+
+    scene.add(newMesh)
+  })
+
+  scene.remove(mesh)
 }
