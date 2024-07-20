@@ -40,7 +40,7 @@ update()
 async function init() {
   // ===== Managers =====
   initInputEvents(simulationStart)
-  raycast.init(scene, camera)
+  raycast.init(scene, camera, inputSimulClothList)
   mode.init(
     ()=>{ // common
       raycast.modeChangeEvent(scene, camera)
@@ -104,6 +104,7 @@ async function init() {
   //#endregion
 
   // modify this code to change object model
+  console.log(cloth40x40.mesh)
   scene.add(cloth40x40.mesh)
   cloth40x40.mesh.translateY(.5)
   simulClothList.push(cloth40x40)
@@ -159,6 +160,7 @@ function physicsSimulation(clothes: Cloth[]){
 }
 
 function simulationStart(){
+  console.log(simulClothList)
   simulClothList.forEach(cloth => {
     cloth.registerDistanceConstraint(0.0)
     cloth.registerPerformantBendingConstraint(1.0)
@@ -168,4 +170,12 @@ function simulationStart(){
     // set floor height
     cloth.setFloorHeight(floorHeight)
   })
+}
+
+function inputSimulClothList(meshList: Mesh[]){
+  if(!meshList) throw Error('inputSimulClothList: input parameter none')
+
+  meshList.forEach(mesh => {  
+    simulClothList.push(new Cloth(mesh, thickness, true))
+  });
 }

@@ -1,19 +1,31 @@
 import * as THREE from "three";
 
-export function separateMesh(scene: THREE.Scene, mesh: THREE.Mesh){
+export function separateMesh(scene: THREE.Scene, mesh: THREE.Mesh): THREE.Mesh[]{
   // BufferGeometry의 속성 추출
+  console.log(mesh)
   const positionAttribute = mesh.geometry.getAttribute('position') as THREE.BufferAttribute;
+  const uvAttribute = mesh.geometry.getAttribute('uv') as THREE.BufferAttribute;
   const indexAttribute = mesh.geometry.getIndex() as THREE.BufferAttribute;
   
   // vertex 좌표 추출
   const vertices: THREE.Vector3[] = [];
   for (let i = 0; i < positionAttribute.count; i++) {
-      vertices.push(new THREE.Vector3(
-          positionAttribute.getX(i),
-          positionAttribute.getY(i),
-          positionAttribute.getZ(i)
-      ));
+    vertices.push(new THREE.Vector3(
+      positionAttribute.getX(i),
+      positionAttribute.getY(i),
+      positionAttribute.getZ(i)
+    ));
   }
+
+  // uv 좌표 추출
+  const uvs: THREE.Vector2[] = [];
+  for (let i = 0; i < uvAttribute.count; i++) {
+    uvs.push(new THREE.Vector2(
+      uvAttribute.getX(i),
+      uvAttribute.getY(i)
+    ));
+  }
+  
 
   // face 인덱스 추출
   const faces: number[][] = [];
@@ -72,11 +84,14 @@ export function separateMesh(scene: THREE.Scene, mesh: THREE.Mesh){
   }
 
   console.log(`분리된 mesh 개수 : `, groups.length)
+  // mesh가 분리되지 않으면 바로 return
+  if(groups.length === 1) return [];
 
   // 각 그룹을 새로운 BufferGeometry로 분리
   const separatedGeometries = groups.map(group => {
       const newGeometry = new THREE.BufferGeometry();
       const newVertices: number[] = [];
+      const newUvs: number[] = [];
       const newIndices: number[] = [];
       const vertexMapping = new Map();
       let newIndex = 0;
@@ -87,26 +102,32 @@ export function separateMesh(scene: THREE.Scene, mesh: THREE.Mesh){
               if (!vertexMapping.has(vertexIndex)) {
                   vertexMapping.set(vertexIndex, newIndex++);
                   const vertex = vertices[vertexIndex];
+                  const uv = uvs[vertexIndex];
                   newVertices.push(vertex.x, vertex.y, vertex.z);
+                  newUvs.push(uv.x, uv.y);
               }
               newIndices.push(vertexMapping.get(vertexIndex));
           });
       });
 
       newGeometry.setAttribute('position', new THREE.Float32BufferAttribute(newVertices, 3));
+      newGeometry.setAttribute('uv', new THREE.Float32BufferAttribute(newUvs, 2));
       newGeometry.setIndex(newIndices);
       newGeometry.computeVertexNormals();
 
       return newGeometry;
   });
 
+  const meshList: THREE.Mesh[] = []
   separatedGeometries.forEach((geometry, index) =>{
     const newMesh: THREE.Mesh = mesh.clone();
     newMesh.geometry = geometry;
     newMesh.name = mesh.name + index
-
+    meshList.push(newMesh)
     scene.add(newMesh)
-  })
-
+  })  
   scene.remove(mesh)
+
+  console.log(`meshList: `, meshList)
+  return meshList
 }

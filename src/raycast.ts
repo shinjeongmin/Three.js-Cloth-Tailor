@@ -14,7 +14,7 @@ let isMouseDown: boolean = false;
 let clickMesh: Mesh | null = null
 let cuttingVertexIndexList: number[] = []
 
-export function init(scene: Scene, camera: Camera): Raycaster{
+export function init(scene: Scene, camera: Camera, inputSimulClothList: Function): Raycaster{
   // set mouse status
   window.addEventListener('mousedown', ()=>{isMouseDown = true}, false)
   window.addEventListener('mouseup', ()=>{isMouseDown = false}, false)
@@ -82,7 +82,7 @@ export function init(scene: Scene, camera: Camera): Raycaster{
 
         console.log(`current mesh : `, clickMesh)
         if(clickMesh) {
-          separateMesh(scene, clickMesh)
+          inputSimulClothList(separateMesh(scene, clickMesh))
           console.log(`separate after`, scene.children)
         }
         break;
