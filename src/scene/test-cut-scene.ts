@@ -104,7 +104,6 @@ async function init() {
   //#endregion
 
   // modify this code to change object model
-  console.log(cloth40x40.mesh)
   scene.add(cloth40x40.mesh)
   cloth40x40.mesh.translateY(.5)
   simulClothList.push(cloth40x40)
@@ -162,6 +161,7 @@ function physicsSimulation(clothes: Cloth[]){
 function simulationStart(){
   console.log(simulClothList)
   simulClothList.forEach(cloth => {
+    cloth.updateMesh(cloth.mesh);
     cloth.registerDistanceConstraint(0.0)
     cloth.registerPerformantBendingConstraint(1.0)
     cloth.registerSelfCollision()

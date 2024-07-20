@@ -1,5 +1,6 @@
 import { Mesh } from "three"
 import { ClothPhysicsObject } from "./PBD-simulation/physics-object"
+import { ConstraintFactory } from "./PBD-simulation/constraint";
 
 /**
  * Cloth that hangs (like from a clothesline)
@@ -13,10 +14,10 @@ export default class Cloth extends ClothPhysicsObject {
   constructor(mesh: Mesh, thickness: number, vertexFix: boolean) {
     super(mesh, thickness)
     this.mesh = mesh
-    this.init(vertexFix)
+    this.fixVertex(vertexFix)
   }
 
-  private init(vertexFix :boolean) {
+  private fixVertex(vertexFix :boolean) {
     // Set top of cloth to have a mass of 0 to hold still
     // in order to get hanging from clothesline visual
     {
@@ -44,5 +45,29 @@ export default class Cloth extends ClothPhysicsObject {
           this.invMass[i] = 0.0
       }
     }
+  }
+
+  public updateMesh(mesh: Mesh){
+    this.numParticles = mesh.geometry.attributes.position.count;
+    this.positions = new Float32Array(mesh.geometry.attributes.position.array);
+    this.normals = new Float32Array(mesh.geometry.attributes.normal.array);
+    this.prevPositions = new Float32Array(mesh.geometry.attributes.position.array);
+    this.vels = new Float32Array(3 * this.numParticles);
+    this.invMass = new Float32Array(this.numParticles);
+    this.indices = new Uint16Array(mesh.geometry.index?.array ?? new Array(0));
+    this.constraints = [];
+    this.collisions = [];
+
+    this.updatePhysics();
+
+    this.constraintFactory = new ConstraintFactory(
+      this.positions,
+      this.invMass,
+      this.indices,
+      this.neighbors
+    );
+    
+    this.mesh = mesh
+    this.fixVertex(true)
   }
 }

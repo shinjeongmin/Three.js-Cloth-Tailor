@@ -127,6 +127,10 @@ export default abstract class PhysicsObject {
       vecAdd(this.normals, id2, c, 0, 0.333);
     }
   }
+  protected updatePhysics(){
+    this.invMass = this.initInvMass();
+    this.neighbors = this.findTriNeighbors();
+  }
 
   private initInvMass(): Float32Array {
     const invMass = new Float32Array(this.numParticles);

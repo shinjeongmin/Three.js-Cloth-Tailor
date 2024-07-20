@@ -83,9 +83,11 @@ export function separateMesh(scene: THREE.Scene, mesh: THREE.Mesh): THREE.Mesh[]
       }
   }
 
-  console.log(`분리된 mesh 개수 : `, groups.length)
   // mesh가 분리되지 않으면 바로 return
-  if(groups.length === 1) return [];
+  if(groups.length === 1) {
+    console.log(`분리되지 않음`)
+    return [];
+  }
 
   // 각 그룹을 새로운 BufferGeometry로 분리
   const separatedGeometries = groups.map(group => {
