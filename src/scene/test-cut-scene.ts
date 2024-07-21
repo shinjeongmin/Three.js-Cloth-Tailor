@@ -9,6 +9,7 @@ import {initInputEvents} from '../managers/input-manager'
 import * as mode from '../managers/mode-manager'
 import * as gui from "../gui/gui"
 import * as raycast from '../raycast'
+import HierarchyUI from '../gui/hierarchy'
 
 const CANVAS_ID = 'scene'
 let ambientLight: AmbientLight
@@ -20,6 +21,7 @@ const { scene, canvas, renderer } = initScene(CANVAS_ID)
 const camera = new PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 1000)
 camera.position.set(-2, 2.5, 1.5)
 const { cameraControls } = controls.setCameraControl(camera, canvas)
+const hierarchy =  new HierarchyUI()
 
 let cloth40x40: Cloth
 let clothOnepiece: Cloth
@@ -112,6 +114,8 @@ async function init() {
   gui.init()
   gui.vertexViewer(cloth40x40.mesh, scene)
   gui.changeMode()
+
+  hierarchy.buildHierarchy(scene)
 }
 
 async function update() {
@@ -135,6 +139,9 @@ async function update() {
   selectedCloth = cloth40x40 // temporary input cloth40x40
   if(mode.curMode === "NONE") gui.updatePositionGuiWithMesh(selectedCloth.mesh)
   selectedCloth.mesh.geometry.computeBoundingSphere()
+
+  //TODO: modify to update when event callback
+  hierarchy.buildHierarchy(scene)
 
   renderer.render(scene, camera)
 }
