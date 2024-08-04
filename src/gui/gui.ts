@@ -17,6 +17,10 @@ let target = {
 export function init(){
   gui = new GUI({ title: '🐞 Debug GUI', width: 300 })
   gui.add({1:'start/stop cloth simulation'}, '1').name('spacebar').disable(true)
+  gui.add({1:'local/global transformation'}, '1').name('Q').disable(true)
+  gui.add({1:'translation'}, '1').name('W').disable(true)
+  gui.add({1:'rotation'}, '1').name('E').disable(true)
+  gui.add({1:'scale'}, '1').name('R').disable(true)
 }
 
 /**
