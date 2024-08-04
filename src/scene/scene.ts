@@ -65,6 +65,7 @@ async function init() {
       cameraControls.enabled = true
     },
     ()=>{ // ATTACH_VERTEX
+      raycast.initAttachVetexStatus(scene)
       cameraControls.enabled = false
     },
     "ATTACH_VERTEX"

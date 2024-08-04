@@ -55,8 +55,10 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
         break;
       case "TRANSFORM": break;
       case "ATTACH_VERTEX":
-        if(attachVertexStatus === "SELECT") 
+        if(attachVertexStatus === "SELECT"){
+          console.log(`point1`)
           viewIntersectPoint(scene, camera, "point1")
+        }
         else if (attachVertexStatus === "ATTACH") 
           viewIntersectPoint(scene, camera, "point2")
         break;
@@ -95,7 +97,9 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
           changeAttachPointColor(gizmoAttachPoint2, "point2")
         }
         break;
-      default: break;
+      default: 
+        attachVertexStatus = "SELECT"
+        break;
     }
   }, false)
 
@@ -125,14 +129,17 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
         break;
       case "TRANSFORM": break;
       case "ATTACH_VERTEX":
-        if(attachVertexStatus === "SELECT"){
-          attachVertexStatus = "ATTACH"
-        }
-        else if(attachVertexStatus === "ATTACH"){
-          initAttachPointColor(gizmoAttachPoint1, gizmoAttachPoint2)
-          attachVertexStatus = "SELECT"
-          scene.remove(gizmoAttachPoint1)
-          scene.remove(gizmoAttachPoint2)
+        clickMesh = getIntersectObject(scene, camera)!
+        if(clickMesh !== null) {
+          if(attachVertexStatus === "SELECT"){
+            attachVertexStatus = "ATTACH"
+          }
+          else if(attachVertexStatus === "ATTACH"){
+            initAttachPointColor(gizmoAttachPoint1, gizmoAttachPoint2)
+            attachVertexStatus = "SELECT"
+            scene.remove(gizmoAttachPoint1)
+            scene.remove(gizmoAttachPoint2)
+          }
         }
         break;
       default:
@@ -374,4 +381,9 @@ function changeAttachPointColor(pointMesh: THREE.Mesh, gizmoType: "point1" | "po
 function initAttachPointColor(point1: THREE.Mesh, point2: THREE.Mesh){
   (point1.material as THREE.MeshBasicMaterial).color.set('#ff5100');
   (point2.material as THREE.MeshBasicMaterial).color.set('#008cff');
+}
+export function initAttachVetexStatus(scene: THREE.Scene){
+  scene.remove(gizmoAttachPoint1, gizmoAttachPoint2)
+  initAttachPointColor(gizmoAttachPoint1, gizmoAttachPoint2)
+  attachVertexStatus = "SELECT"
 }
