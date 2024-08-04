@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import * as dat from 'lil-gui';
 
+const exceptionList = ['TransformControls']
 
 class HierarchyUI {
     private gui: dat.GUI;
@@ -29,6 +30,7 @@ class HierarchyUI {
         const folder = parentGui.addFolder(object.name || object.type);
 
         object.children.forEach(child => {
+            if(exceptionList.includes(child.name) === false)
             this.addFolder(child, folder);
         });
 

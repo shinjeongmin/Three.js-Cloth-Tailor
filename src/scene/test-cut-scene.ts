@@ -10,11 +10,13 @@ import * as mode from '../managers/mode-manager'
 import * as gui from "../gui/gui"
 import * as raycast from '../raycast'
 import HierarchyUI from '../gui/hierarchy'
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
 
 const CANVAS_ID = 'scene'
 let ambientLight: AmbientLight
 let directionalLight: DirectionalLight
 let pointLight: PointLight
+let transformControls: TransformControls
 
 // global variable
 const { scene, canvas, renderer } = initScene(CANVAS_ID)
@@ -59,7 +61,10 @@ async function init() {
     ()=>{ // REMOVE_EDGE
       cameraControls.enabled = false
     },
-    "REMOVE_VERTEX"
+    ()=>{ // TRANSFORM
+      cameraControls.enabled = true
+    },
+    "TRANSFORM"
   )
 
   // ===== 💡 LIGHTS =====
@@ -109,6 +114,74 @@ async function init() {
   scene.add(cloth40x40.mesh)
   cloth40x40.mesh.translateY(.5)
   simulClothList.push(cloth40x40)
+
+  // Transform Controls
+  transformControls = new TransformControls(camera, renderer.domElement)
+  transformControls.addEventListener('dragging-changed', event => {
+    cameraControls.enabled = !event.value
+  })
+  /*
+	transformControls.addEventListener( 'mouseDown', function () {
+
+		const object = transformControls.object;
+
+		objectPositionOnDown = object.position.clone();
+		objectRotationOnDown = object.rotation.clone();
+		objectScaleOnDown = object.scale.clone();
+
+		controls.enabled = false;
+
+	} );
+	transformControls.addEventListener( 'mouseUp', function () {
+
+		const object = transformControls.object;
+
+		if ( object !== undefined ) {
+
+			switch ( transformControls.getMode() ) {
+
+				case 'translate':
+
+					if ( ! objectPositionOnDown.equals( object.position ) ) {
+
+						editor.execute( new SetPositionCommand( editor, object, object.position, objectPositionOnDown ) );
+
+					}
+
+					break;
+
+				case 'rotate':
+
+					if ( ! objectRotationOnDown.equals( object.rotation ) ) {
+
+						editor.execute( new SetRotationCommand( editor, object, object.rotation, objectRotationOnDown ) );
+
+					}
+
+					break;
+
+				case 'scale':
+
+					if ( ! objectScaleOnDown.equals( object.scale ) ) {
+
+						editor.execute( new SetScaleCommand( editor, object, object.scale, objectScaleOnDown ) );
+
+					}
+
+					break;
+
+			}
+
+		}
+
+		controls.enabled = true;
+
+	} );
+   */
+  transformControls.name = 'TransformControls'
+  scene.add(transformControls)
+  raycast.initTransformControls(transformControls, scene, camera)
+
 
   // debugger
   gui.init()

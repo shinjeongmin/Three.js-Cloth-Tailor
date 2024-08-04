@@ -5,6 +5,7 @@ import * as gui from "./gui/gui"
 import { removeFace } from "./geometry/vertex-remover"
 import { edgeCut } from "./geometry/mesh-edge-cutter"
 import {separateMesh} from "./geometry/mesh-separator"
+import { TransformControls } from "three/examples/jsm/controls/TransformControls"
 
 let raycaster = new Raycaster()
 const mouse = new Vector2()
@@ -46,6 +47,7 @@ export function init(scene: Scene, camera: Camera, inputSimulClothList: Function
           stackClickVertexIndex(scene, camera)
         }
         break;
+      case "TRANSFORM": break;
       default: break;
     }
   }, false)
@@ -80,7 +82,6 @@ export function init(scene: Scene, camera: Camera, inputSimulClothList: Function
       case "REMOVE_VERTEX":
         scene.remove(gizmoLine)
 
-        console.log(`current mesh : `, clickMesh)
         if(clickMesh) {
           inputSimulClothList(separateMesh(scene, clickMesh))
           console.log(`separate after`, scene.children)
@@ -237,4 +238,26 @@ function drawLineVertexIndexList(scene: Scene, vecList: Vector3[]){
   gizmoLine.geometry = geometry
   gizmoLine.material = material
   scene.add(gizmoLine)
+}
+
+export function initTransformControls(transformControls: TransformControls, scene: Scene, camera: Camera){
+  window.addEventListener('mousedown', ()=>{
+    switch(mode.curMode){
+      case "TRANSFORM":
+        const object = getIntersectObject(scene, camera)
+        // search parent recursively is transform controls
+        let isTransformControls = false
+        let parent = object?.parent
+        while(parent){
+          if(parent.name == "TransformControls") isTransformControls = true
+          parent = parent.parent
+        }
+
+        console.log(object);
+        if (object && isTransformControls === false) {
+          transformControls.attach(object);
+        }
+        break;
+    }
+  }, false)
 }

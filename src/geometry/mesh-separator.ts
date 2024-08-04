@@ -2,7 +2,6 @@ import * as THREE from "three";
 
 export function separateMesh(scene: THREE.Scene, mesh: THREE.Mesh): THREE.Mesh[]{
   // BufferGeometry의 속성 추출
-  console.log(mesh)
   const positionAttribute = mesh.geometry.getAttribute('position') as THREE.BufferAttribute;
   const uvAttribute = mesh.geometry.getAttribute('uv') as THREE.BufferAttribute;
   const indexAttribute = mesh.geometry.getIndex() as THREE.BufferAttribute;
