@@ -135,7 +135,6 @@ function getIntersectObject(scene: Scene, camera: Camera): Mesh | null{
       }
       if(isTransformControls) continue
 
-      console.log(intersect.object)
       return intersect.object as Mesh
     }
   }
@@ -197,6 +196,15 @@ function getIntersectVertex(scene: Scene, camera: Camera): number[]{
       const intersect = intersects[i]
       if(intersect.object === gizmoLine) continue
 
+      // search parent recursively is transform controls
+      let isTransformControls = false
+      let parent = intersect.object?.parent
+      while(parent){
+        if(parent.name == "TransformControls") isTransformControls = true
+        parent = parent.parent
+      }
+      if(isTransformControls) continue
+      
       closestVertexIndices = findClosestVertexIndex(intersect.point, intersect.object as Mesh)
 
       break
