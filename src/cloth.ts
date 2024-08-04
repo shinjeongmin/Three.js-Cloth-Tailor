@@ -1,4 +1,4 @@
-import { Mesh } from "three"
+import { Mesh,Vector3 } from "three"
 import { ClothPhysicsObject } from "./PBD-simulation/physics-object"
 import { ConstraintFactory } from "./PBD-simulation/constraint";
 
@@ -48,6 +48,8 @@ export default class Cloth extends ClothPhysicsObject {
   }
 
   public updateMesh(mesh: Mesh){
+    this.updateTransformMatrix(mesh)
+
     this.numParticles = mesh.geometry.attributes.position.count;
     this.positions = new Float32Array(mesh.geometry.attributes.position.array);
     this.normals = new Float32Array(mesh.geometry.attributes.normal.array);
@@ -69,5 +71,18 @@ export default class Cloth extends ClothPhysicsObject {
     
     this.mesh = mesh
     this.fixVertex(true)
+  }
+
+  public updateTransformMatrix(mesh: Mesh){
+    const matrix = mesh.matrixWorld;
+    const positionAttribute = mesh.geometry.attributes.position;
+    
+    for (let i = 0; i < positionAttribute.count; i++) {
+        const vertex = new Vector3().fromBufferAttribute(positionAttribute, i);
+        vertex.applyMatrix4(matrix);
+        positionAttribute.setXYZ(i, vertex.x, vertex.y, vertex.z);
+    }
+
+    mesh.matrix.identity().decompose(mesh.position, mesh.quaternion, mesh.scale)
   }
 }

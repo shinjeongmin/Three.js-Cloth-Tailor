@@ -135,6 +135,7 @@ function getIntersectObject(scene: Scene, camera: Camera): Mesh | null{
       }
       if(isTransformControls) continue
 
+      console.log(intersect.object)
       return intersect.object as Mesh
     }
   }

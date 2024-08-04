@@ -182,7 +182,7 @@ function physicsSimulation(clothes: Cloth[]){
 
 function simulationStart(){
   simulClothList.forEach(cloth => {
-    cloth.updateMesh(cloth.mesh);
+    cloth.updateMesh(cloth.mesh)
     cloth.registerDistanceConstraint(0.0)
     cloth.registerPerformantBendingConstraint(1.0)
     cloth.registerSelfCollision()
