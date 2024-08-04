@@ -1,4 +1,4 @@
-import { BufferGeometry, Camera, InstancedInterleavedBuffer, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, Ray, Raycaster, Scene, SphereGeometry, Vector2, Vector3 } from "three"
+import * as THREE from "three"
 import * as mode from './managers/mode-manager'
 import { findClosestVertex, findClosestVertexIndex } from "./geometry/vertex-finder"
 import * as gui from "./gui/gui"
@@ -7,15 +7,15 @@ import { edgeCut } from "./geometry/mesh-edge-cutter"
 import {separateMesh} from "./geometry/mesh-separator"
 import { TransformControls } from "three/examples/jsm/controls/TransformControls"
 
-let raycaster = new Raycaster()
-const mouse = new Vector2()
-let gizmoLine: Line = new Line()
+let raycaster = new THREE.Raycaster()
+const mouse = new THREE.Vector2()
+let gizmoLine: THREE.Line = new THREE.Line()
 let isMouseDown: boolean = false;
 
-let clickMesh: Mesh | null = null
+let clickMesh: THREE.Mesh | null = null
 let cuttingVertexIndexList: number[] = []
 
-export function init(scene: Scene, camera: Camera, inputSimulClothList: Function): Raycaster{
+export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothList: Function): THREE.Raycaster{
   // set mouse status
   window.addEventListener('mousedown', ()=>{isMouseDown = true}, false)
   window.addEventListener('mouseup', ()=>{isMouseDown = false}, false)
@@ -69,6 +69,8 @@ export function init(scene: Scene, camera: Camera, inputSimulClothList: Function
       case "REMOVE_EDGE": 
         cuttingVertexIndexList = [] // initialize vertex index list
         break;
+      case "ATTACH_VERTEX":
+        break;
       default: break;
     }
   }, false)
@@ -111,13 +113,13 @@ function onMouseMove(event: MouseEvent) {
   mouse.y = - (event.clientY / window.innerHeight) * 2 + 1
 }
 
-export function modeChangeEvent(scene: Scene, camera: Camera){
+export function modeChangeEvent(scene: THREE.Scene, camera: THREE.Camera){
   if(mode.curMode !== "RAYCAST" && mode.curMode !== "REMOVE_EDGE") {
     scene.remove(gizmoLine)
   }
 }
 
-function getIntersectObject(scene: Scene, camera: Camera): Mesh | null{
+function getIntersectObject(scene: THREE.Scene, camera: THREE.Camera): THREE.Mesh | null{
   raycaster.setFromCamera(mouse, camera)
   const intersects = raycaster.intersectObjects(scene.children)
 
@@ -135,14 +137,14 @@ function getIntersectObject(scene: Scene, camera: Camera): Mesh | null{
       }
       if(isTransformControls) continue
 
-      return intersect.object as Mesh
+      return intersect.object as THREE.Mesh
     }
   }
   
   return null
 }
 
-export function viewIntersectPoint(scene: Scene, camera: Camera){
+export function viewIntersectPoint(scene: THREE.Scene, camera: THREE.Camera){
   if(mode.curMode === "NONE") {
     scene.remove(gizmoLine)
     return
@@ -156,7 +158,7 @@ export function viewIntersectPoint(scene: Scene, camera: Camera){
       const intersect = intersects[i]
       if(intersect.object === gizmoLine) continue
 
-      const closestPoint = findClosestVertex(intersect.point, intersect.object as Mesh)
+      const closestPoint = findClosestVertex(intersect.point, intersect.object as THREE.Mesh)
 
       drawLine(scene, closestPoint)
       gui.updatePositionGuiWithVector3(closestPoint)
@@ -165,28 +167,28 @@ export function viewIntersectPoint(scene: Scene, camera: Camera){
   }
 }
 
-function drawLine(scene: Scene, vec: Vector3){
-  let material = new LineBasicMaterial({
+function drawLine(scene: THREE.Scene, vec: THREE.Vector3){
+  let material = new THREE.LineBasicMaterial({
     color: '#09ff00',
     linewidth: 10,
     depthTest: false,
   })
-  let startVec = new Vector3().copy(vec)
+  let startVec = new THREE.Vector3().copy(vec)
   startVec.y += 0.1
-  let endVec = new Vector3().copy(vec)
+  let endVec = new THREE.Vector3().copy(vec)
   // endVec.multiplyScalar(1)
   
-  let midVec = new Vector3()
+  let midVec = new THREE.Vector3()
   midVec.lerpVectors(startVec, endVec, 0.5)
 
-  let geometry = new BufferGeometry().setFromPoints([startVec, endVec])
+  let geometry = new THREE.BufferGeometry().setFromPoints([startVec, endVec])
 
   gizmoLine.geometry = geometry
   gizmoLine.material = material
   scene.add(gizmoLine)
 }
 
-function getIntersectVertex(scene: Scene, camera: Camera): number[]{
+function getIntersectVertex(scene: THREE.Scene, camera: THREE.Camera): number[]{
   raycaster.setFromCamera(mouse, camera)
   const intersects = raycaster.intersectObjects(scene.children)
   let closestVertexIndices
@@ -205,7 +207,7 @@ function getIntersectVertex(scene: Scene, camera: Camera): number[]{
       }
       if(isTransformControls) continue
       
-      closestVertexIndices = findClosestVertexIndex(intersect.point, intersect.object as Mesh)
+      closestVertexIndices = findClosestVertexIndex(intersect.point, intersect.object as THREE.Mesh)
 
       break
     }
@@ -213,7 +215,7 @@ function getIntersectVertex(scene: Scene, camera: Camera): number[]{
   return closestVertexIndices!
 }
 
-function stackClickVertexIndex(scene: Scene, camera: Camera){
+function stackClickVertexIndex(scene: THREE.Scene, camera: THREE.Camera){
   raycaster.setFromCamera(mouse, camera)
   const intersects = raycaster.intersectObjects(scene.children)
   clickMesh = getIntersectObject(scene, camera)!
@@ -233,13 +235,13 @@ function stackClickVertexIndex(scene: Scene, camera: Camera){
       if(isTransformControls) continue
       // --
 
-      const vertexIndex: number = findClosestVertexIndex(intersect.point, intersect.object as Mesh)[0]
+      const vertexIndex: number = findClosestVertexIndex(intersect.point, intersect.object as THREE.Mesh)[0]
       if(cuttingVertexIndexList.includes(vertexIndex) === false){
         cuttingVertexIndexList.push(vertexIndex)
 
-        let vertexPosList: Vector3[] = []
+        let vertexPosList: THREE.Vector3[] = []
         for(let i=0; i<cuttingVertexIndexList.length; i++){
-          vertexPosList.push(new Vector3(
+          vertexPosList.push(new THREE.Vector3(
             clickMesh.geometry.attributes.position.getX(cuttingVertexIndexList[i]),
             clickMesh.geometry.attributes.position.getY(cuttingVertexIndexList[i]),
             clickMesh.geometry.attributes.position.getZ(cuttingVertexIndexList[i])
@@ -254,21 +256,21 @@ function stackClickVertexIndex(scene: Scene, camera: Camera){
   }
 }
 
-function drawLineVertexIndexList(scene: Scene, vecList: Vector3[]){
-  let material = new LineBasicMaterial({
+function drawLineVertexIndexList(scene: THREE.Scene, vecList: THREE.Vector3[]){
+  let material = new THREE.LineBasicMaterial({
     color: '#5ea9ff',
     linewidth: 10,
     depthTest: false,
   })
 
-  let geometry = new BufferGeometry().setFromPoints(vecList)
+  let geometry = new THREE.BufferGeometry().setFromPoints(vecList)
 
   gizmoLine.geometry = geometry
   gizmoLine.material = material
   scene.add(gizmoLine)
 }
 
-export function initTransformControls(transformControls: TransformControls, scene: Scene, camera: Camera){
+export function initTransformControls(transformControls: TransformControls, scene: THREE.Scene, camera: THREE.Camera){
   window.addEventListener('mousedown', ()=>{
     switch(mode.curMode){
       case "TRANSFORM":

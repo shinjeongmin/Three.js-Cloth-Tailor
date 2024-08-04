@@ -64,7 +64,10 @@ async function init() {
     ()=>{ // TRANSFORM
       cameraControls.enabled = true
     },
-    "TRANSFORM"
+    ()=>{ // ATTACH_VERTEX
+      cameraControls.enabled = false
+    },
+    "ATTACH_VERTEX"
   )
 
   // ===== 💡 LIGHTS =====

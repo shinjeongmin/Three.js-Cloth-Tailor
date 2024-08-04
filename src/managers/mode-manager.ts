@@ -1,5 +1,5 @@
-export type Mode = "NONE" | "RAYCAST" | "REMOVE_VERTEX" | "REMOVE_EDGE" | "TRANSFORM"
-export const Modes: Mode[] = ["NONE", "RAYCAST", "REMOVE_VERTEX","REMOVE_EDGE", "TRANSFORM"]
+export type Mode = "NONE" | "RAYCAST" | "REMOVE_VERTEX" | "REMOVE_EDGE" | "TRANSFORM" | "ATTACH_VERTEX"
+export const Modes: Mode[] = ["NONE", "RAYCAST", "REMOVE_VERTEX","REMOVE_EDGE", "TRANSFORM", "ATTACH_VERTEX"]
 
 export let stateSimulation:boolean = false
 export let curMode: Mode = "NONE"
@@ -9,15 +9,18 @@ let changeModeEventRAYCAST: Function
 let changeModeEventREMOVE_VERTEX: Function
 let changeModeEventREMOVE_EDGE: Function
 let changeModeEventTRANSFORM: Function
+let changeModeEventATTACH_VERTEX: Function
 
 export function init(func: Function, noneFunc: Function, raycastFunc: Function,
-  removeVertexFunc: Function, removeEdgeFunc: Function, transformFunc: Function, mode: Mode = curMode) {
+  removeVertexFunc: Function, removeEdgeFunc: Function, transformFunc: Function, 
+  attachVertexFunc: Function, mode: Mode = curMode) {
   changeModeEvent = func
   changeModeEventNONE = noneFunc
   changeModeEventRAYCAST = raycastFunc
   changeModeEventREMOVE_VERTEX = removeVertexFunc
   changeModeEventREMOVE_EDGE = removeEdgeFunc
   changeModeEventTRANSFORM = transformFunc
+  changeModeEventATTACH_VERTEX = attachVertexFunc
 
   changeMode(mode)
 }
@@ -39,5 +42,8 @@ export function changeMode(mode: Mode){
   }
   else if(curMode === "TRANSFORM"){
     changeModeEventTRANSFORM()
+  }
+  else if(curMode === "ATTACH_VERTEX"){
+    changeModeEventATTACH_VERTEX()
   }
 }
