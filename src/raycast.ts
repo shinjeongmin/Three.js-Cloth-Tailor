@@ -223,6 +223,16 @@ function stackClickVertexIndex(scene: Scene, camera: Camera){
       const intersect = intersects[i]
       if(intersect.object === gizmoLine) continue
 
+      // -- search parent recursively is transform controls
+      let isTransformControls = false
+      let parent = intersect.object?.parent
+      while(parent){
+        if(parent.name == "TransformControls") isTransformControls = true
+        parent = parent.parent
+      }
+      if(isTransformControls) continue
+      // --
+
       const vertexIndex: number = findClosestVertexIndex(intersect.point, intersect.object as Mesh)[0]
       if(cuttingVertexIndexList.includes(vertexIndex) === false){
         cuttingVertexIndexList.push(vertexIndex)
