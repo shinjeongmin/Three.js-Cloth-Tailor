@@ -120,64 +120,6 @@ async function init() {
   transformControls.addEventListener('dragging-changed', event => {
     cameraControls.enabled = !event.value
   })
-  /*
-	transformControls.addEventListener( 'mouseDown', function () {
-
-		const object = transformControls.object;
-
-		objectPositionOnDown = object.position.clone();
-		objectRotationOnDown = object.rotation.clone();
-		objectScaleOnDown = object.scale.clone();
-
-		controls.enabled = false;
-
-	} );
-	transformControls.addEventListener( 'mouseUp', function () {
-
-		const object = transformControls.object;
-
-		if ( object !== undefined ) {
-
-			switch ( transformControls.getMode() ) {
-
-				case 'translate':
-
-					if ( ! objectPositionOnDown.equals( object.position ) ) {
-
-						editor.execute( new SetPositionCommand( editor, object, object.position, objectPositionOnDown ) );
-
-					}
-
-					break;
-
-				case 'rotate':
-
-					if ( ! objectRotationOnDown.equals( object.rotation ) ) {
-
-						editor.execute( new SetRotationCommand( editor, object, object.rotation, objectRotationOnDown ) );
-
-					}
-
-					break;
-
-				case 'scale':
-
-					if ( ! objectScaleOnDown.equals( object.scale ) ) {
-
-						editor.execute( new SetScaleCommand( editor, object, object.scale, objectScaleOnDown ) );
-
-					}
-
-					break;
-
-			}
-
-		}
-
-		controls.enabled = true;
-
-	} );
-   */
   transformControls.name = 'TransformControls'
   scene.add(transformControls)
   raycast.initTransformControls(transformControls, scene, camera)
@@ -239,7 +181,6 @@ function physicsSimulation(clothes: Cloth[]){
 }
 
 function simulationStart(){
-  console.log(simulClothList)
   simulClothList.forEach(cloth => {
     cloth.updateMesh(cloth.mesh);
     cloth.registerDistanceConstraint(0.0)

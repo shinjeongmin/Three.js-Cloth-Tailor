@@ -126,6 +126,15 @@ function getIntersectObject(scene: Scene, camera: Camera): Mesh | null{
       const intersect = intersects[i]
       if(intersect.object === gizmoLine) continue
 
+      // search parent recursively is transform controls
+      let isTransformControls = false
+      let parent = intersect.object?.parent
+      while(parent){
+        if(parent.name == "TransformControls") isTransformControls = true
+        parent = parent.parent
+      }
+      if(isTransformControls) continue
+
       return intersect.object as Mesh
     }
   }
@@ -245,18 +254,27 @@ export function initTransformControls(transformControls: TransformControls, scen
     switch(mode.curMode){
       case "TRANSFORM":
         const object = getIntersectObject(scene, camera)
-        // search parent recursively is transform controls
-        let isTransformControls = false
-        let parent = object?.parent
-        while(parent){
-          if(parent.name == "TransformControls") isTransformControls = true
-          parent = parent.parent
-        }
 
-        console.log(object);
-        if (object && isTransformControls === false) {
+        if (object) {
           transformControls.attach(object);
         }
+        break;
+    }
+  }, false)
+
+  window.addEventListener('keydown', (event)=>{
+    switch ( event.key ) {
+      case 'q':
+        transformControls.setSpace( transformControls.space === 'local' ? 'world' : 'local' );
+        break;
+      case 'w':
+        transformControls.setMode( 'translate' );
+        break;
+      case 'e':
+        transformControls.setMode( 'rotate' );
+        break;
+      case 'r':
+        transformControls.setMode( 'scale' );
         break;
     }
   }, false)
