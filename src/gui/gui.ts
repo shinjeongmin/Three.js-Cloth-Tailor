@@ -114,7 +114,7 @@ export function vertexViewer(mesh: Mesh, scene: Scene){
   gui.add(target.position, 'x').name('position x').disable(true)
   gui.add(target.position, 'y').name('position y').disable(true)
   gui.add(target.position, 'z').name('position z').disable(true)
-  gui.add(target, 'pickVertexIndex').name('current vertex index').disable(true)
+  gui.add(target, 'pickVertexIndex').name('picked vertex index').disable(true)
 
   scene.add(point)
 }
