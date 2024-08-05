@@ -1,5 +1,5 @@
 import GUI from 'lil-gui'
-import { AmbientLight, AxesHelper, GridHelper, Mesh, MeshBasicMaterial, PointLight, PointLightHelper, Scene, SphereGeometry, Vector3 } from 'three'
+import { AmbientLight, AxesHelper, BufferGeometry, GridHelper, Mesh, MeshBasicMaterial, PointLight, PointLightHelper, Scene, SphereGeometry, Vector3 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import * as mode from '../managers/mode-manager'
 
@@ -11,7 +11,8 @@ let target = {
     x: 0,
     y: 0,
     z: 0,
-  }
+  },
+  pickVertexIndex: "",
 }
 
 export function init(){
@@ -113,6 +114,7 @@ export function vertexViewer(mesh: Mesh, scene: Scene){
   gui.add(target.position, 'x').name('position x').disable(true)
   gui.add(target.position, 'y').name('position y').disable(true)
   gui.add(target.position, 'z').name('position z').disable(true)
+  gui.add(target, 'pickVertexIndex').name('current vertex index').disable(true)
 
   scene.add(point)
 }
@@ -133,6 +135,21 @@ export function updatePositionGuiWithVector3(pos: Vector3){
   target.position.x = +pos.x.toFixed(4)
   target.position.y = +pos.y.toFixed(4)
   target.position.z = +pos.z.toFixed(4)
+
+  gui.controllers.forEach(ctrl => {
+    ctrl.updateDisplay()
+  });
+}
+
+export function updateIndexGui(numbers: number[]){
+  // + for type change string to number
+  target.pickVertexIndex = ""
+  numbers.forEach((number, index)=>{
+    target.pickVertexIndex += number
+
+    //if(index !== numbers.length - 1)
+      target.pickVertexIndex += ", "
+  })
 
   gui.controllers.forEach(ctrl => {
     ctrl.updateDisplay()

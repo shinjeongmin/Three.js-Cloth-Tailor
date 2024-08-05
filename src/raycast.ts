@@ -6,6 +6,7 @@ import { removeFace } from "./geometry/vertex-remover"
 import { edgeCut } from "./geometry/mesh-edge-cutter"
 import {separateMesh} from "./geometry/mesh-separator"
 import { TransformControls } from "three/examples/jsm/controls/TransformControls"
+import { setVertexIndex1, setVertexIndex2 } from './geometry/mesh-attacher'
 
 let raycaster = new THREE.Raycaster()
 const mouse = new THREE.Vector2()
@@ -15,6 +16,8 @@ let isMouseDown: boolean = false;
 //#region attach vertex
 let gizmoAttachPoint1: THREE.Mesh = new THREE.Mesh(new THREE.SphereGeometry(0.02), new THREE.MeshBasicMaterial({color: '#ff5100', transparent: false}))
 let gizmoAttachPoint2: THREE.Mesh = new THREE.Mesh(new THREE.SphereGeometry(0.02), new THREE.MeshBasicMaterial({color: '#008cff', transparent: false}))
+gizmoAttachPoint1.name = 'vertex point 1'
+gizmoAttachPoint2.name = 'vertex point 2'
 let attachVertexStatus: "SELECT"|"ATTACH" = "SELECT"
 //#endregion
 
@@ -56,7 +59,6 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
       case "TRANSFORM": break;
       case "ATTACH_VERTEX":
         if(attachVertexStatus === "SELECT"){
-          console.log(`point1`)
           viewIntersectPoint(scene, camera, "point1")
         }
         else if (attachVertexStatus === "ATTACH") 
@@ -85,16 +87,18 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
         break;
       case "TRANSFORM": break;
       case "ATTACH_VERTEX":
-        if(attachVertexStatus === "SELECT") {
-          clickMesh = getIntersectObject(scene, camera)!
-          if(clickMesh !== null) {
-            const vertexIndex = getIntersectVertex(scene, camera)[0]
+        clickMesh = getIntersectObject(scene, camera)!
+        if(clickMesh !== null) {
+          const vertexIndex = getIntersectVertex(scene, camera)[0]
+
+          if(attachVertexStatus === "SELECT") {
             changeAttachPointColor(gizmoAttachPoint1, "point1")
-            
+            setVertexIndex1(vertexIndex)
           }
-        }
-        else if (attachVertexStatus === "ATTACH") {
-          changeAttachPointColor(gizmoAttachPoint2, "point2")
+          else if (attachVertexStatus === "ATTACH") {
+            changeAttachPointColor(gizmoAttachPoint2, "point2")
+            setVertexIndex2(vertexIndex)
+          }
         }
         break;
       default: 
@@ -217,6 +221,8 @@ export function viewIntersectPoint(scene: THREE.Scene, camera: THREE.Camera, giz
         case "line":
           drawLine(scene, closestPoint)
           gui.updatePositionGuiWithVector3(closestPoint)
+          const vertexIndexList: number[] = findClosestVertexIndex(intersect.point, intersect.object as THREE.Mesh)
+          gui.updateIndexGui(vertexIndexList)
           break;
         case "point1":
           drawPoint(scene, closestPoint, gizmoAttachPoint1)
