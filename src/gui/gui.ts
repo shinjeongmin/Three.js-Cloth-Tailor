@@ -82,6 +82,7 @@ export function setTestDebug
 export function vertexViewer(mesh: Mesh, scene: Scene){
   const point = new Mesh(new SphereGeometry(0.01), new MeshBasicMaterial({color: 'green', transparent: false}))
   point.name = 'gizmoSphere'
+  point.userData.isGizmo = true;
 
   const updateVertexView = ()=>{
     const pos = mesh.localToWorld(new Vector3(

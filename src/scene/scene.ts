@@ -25,7 +25,7 @@ camera.position.set(-2, 2.5, 1.5)
 const { cameraControls } = controls.setCameraControl(camera, canvas)
 const hierarchy =  new HierarchyUI()
 
-let cloth40x40: Cloth
+let cloth: Cloth
 let clothOnepiece: Cloth
 let selectedCloth: Cloth
 let simulClothList: Cloth[] = []
@@ -99,12 +99,12 @@ async function init() {
   scene.add(plane)
 
   // model load
-  //#region cloth 40x40 object
-  let objPath = 'cloth40x40.obj'
+  //#region cloth object
+  let objPath = 'cloth4x3.obj'
   let file = await customOBJLoader.load(objPath)
-  cloth40x40 = new Cloth(customOBJLoader.parse(file), thickness, true)
-  cloth40x40.mesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
-  cloth40x40.mesh.name = 'cloth'
+  cloth = new Cloth(customOBJLoader.parse(file), thickness, true)
+  cloth.mesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
+  cloth.mesh.name = 'cloth'
   //#endregion
 
   //#region cloth onepiece object
@@ -115,9 +115,9 @@ async function init() {
   //#endregion
 
   // modify this code to change object model
-  scene.add(cloth40x40.mesh)
-  cloth40x40.mesh.translateY(.5)
-  simulClothList.push(cloth40x40)
+  scene.add(cloth.mesh)
+  cloth.mesh.translateY(.5)
+  simulClothList.push(cloth)
 
   // Transform Controls
   transformControls = new TransformControls(camera, renderer.domElement)
@@ -131,7 +131,7 @@ async function init() {
 
   // debugger
   gui.init()
-  gui.vertexViewer(cloth40x40.mesh, scene)
+  gui.vertexViewer(cloth.mesh, scene)
   gui.changeMode()
 
   hierarchy.buildHierarchy(scene)
@@ -155,7 +155,7 @@ async function update() {
   cameraControls.update()
 
   // selected cloth 
-  selectedCloth = cloth40x40 // temporary input cloth40x40
+  selectedCloth = cloth // temporary input cloth
   if(mode.curMode === "NONE") gui.updatePositionGuiWithMesh(selectedCloth.mesh)
   selectedCloth.mesh.geometry.computeBoundingSphere()
 

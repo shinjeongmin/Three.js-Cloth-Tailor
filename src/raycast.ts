@@ -6,11 +6,12 @@ import { removeFace } from "./geometry/vertex-remover"
 import { edgeCut } from "./geometry/mesh-edge-cutter"
 import {separateMesh} from "./geometry/mesh-separator"
 import { TransformControls } from "three/examples/jsm/controls/TransformControls"
-import { setVertexIndex1, setVertexIndex2 } from './geometry/mesh-attacher'
+import { attachVertex, initVertexIndices, setVertexIndex1, setVertexIndex2 } from './geometry/mesh-attacher'
 
 let raycaster = new THREE.Raycaster()
 const mouse = new THREE.Vector2()
 let gizmoLine: THREE.Line = new THREE.Line()
+gizmoLine.userData.isGizmo = true;
 let isMouseDown: boolean = false;
 
 //#region attach vertex
@@ -18,6 +19,8 @@ let gizmoAttachPoint1: THREE.Mesh = new THREE.Mesh(new THREE.SphereGeometry(0.02
 let gizmoAttachPoint2: THREE.Mesh = new THREE.Mesh(new THREE.SphereGeometry(0.02), new THREE.MeshBasicMaterial({color: '#008cff', transparent: false}))
 gizmoAttachPoint1.name = 'vertex point 1'
 gizmoAttachPoint2.name = 'vertex point 2'
+gizmoAttachPoint1.userData.isGizmo = true;
+gizmoAttachPoint2.userData.isGizmo = true;
 let attachVertexStatus: "SELECT"|"ATTACH" = "SELECT"
 //#endregion
 
@@ -93,11 +96,11 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
 
           if(attachVertexStatus === "SELECT") {
             changeAttachPointColor(gizmoAttachPoint1, "point1")
-            setVertexIndex1(vertexIndex)
+            setVertexIndex1(vertexIndex, clickMesh)
           }
           else if (attachVertexStatus === "ATTACH") {
             changeAttachPointColor(gizmoAttachPoint2, "point2")
-            setVertexIndex2(vertexIndex)
+            setVertexIndex2(vertexIndex, clickMesh)
           }
         }
         break;
@@ -143,6 +146,9 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
             attachVertexStatus = "SELECT"
             scene.remove(gizmoAttachPoint1)
             scene.remove(gizmoAttachPoint2)
+            const attachResult: boolean = attachVertex()
+            initVertexIndices()
+            console.log(`attach result: ${attachResult}`)
           }
         }
         break;
@@ -183,6 +189,8 @@ function getIntersectObject(scene: THREE.Scene, camera: THREE.Camera): THREE.Mes
         parent = parent.parent
       }
       if(isTransformControls) continue
+      // check is gizmo
+      if(intersect.object.userData.isGizmo) continue
 
       return intersect.object as THREE.Mesh
     }
@@ -214,6 +222,8 @@ export function viewIntersectPoint(scene: THREE.Scene, camera: THREE.Camera, giz
         parent = parent.parent
       }
       if(isTransformControls) continue
+      // check is gizmo
+      if(intersect.object.userData.isGizmo) continue
 
       const closestPoint = findClosestVertex(intersect.point, intersect.object as THREE.Mesh)
 
@@ -276,6 +286,8 @@ function getIntersectVertex(scene: THREE.Scene, camera: THREE.Camera): number[]{
         parent = parent.parent
       }
       if(isTransformControls) continue
+      // check is gizmo
+      if(intersect.object.userData.isGizmo) continue
       
       closestVertexIndices = findClosestVertexIndex(intersect.point, intersect.object as THREE.Mesh)
 
@@ -303,6 +315,8 @@ function stackClickVertexIndex(scene: THREE.Scene, camera: THREE.Camera){
         parent = parent.parent
       }
       if(isTransformControls) continue
+      // check is gizmo
+      if(intersect.object.userData.isGizmo) continue
       // --
 
       const vertexIndex: number = findClosestVertexIndex(intersect.point, intersect.object as THREE.Mesh)[0]
