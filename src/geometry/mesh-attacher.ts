@@ -22,7 +22,7 @@ export function initVertexIndices(){
 }
 
 // this function is handle case only vertex index 1 by 1.
-export function attachVertex(): boolean{
+export function attachVertex(scene: THREE.Scene): boolean{
   if (mesh1 === null || mesh2 === null) {
     console.error("Meshes must be set before calling attachVertex.");
     return false;
@@ -63,7 +63,7 @@ export function attachVertex(): boolean{
     const mergedGeom = utils.mergeGeometries([geom1, geom2], false);
 
     // get index2 after merge
-    const geom1IndexCnt: number = geom1.index.count
+    const geom1IndexCnt: number = Math.max(...Array.from(geom1.index.array)) + 1
     const mergedVertexIndex2 = vertexIndex2 + geom1IndexCnt;
 
     // index face list에서 merged vertex index 2에 해당하는 인덱스를 vertex index 1으로 대체 
@@ -84,6 +84,11 @@ export function attachVertex(): boolean{
     const result = !mergedGeom.index.array.includes(mergedVertexIndex2)
     mergedGeom.computeVertexNormals()
     mergedGeom.attributes.position.needsUpdate = true;
+
+    // 병합 geometry를 반영하고 남은 mesh 제거
+    mesh1.geometry = mergedGeom
+    scene.remove(mesh2)
+
     return result
   }
 }

@@ -105,7 +105,7 @@ export function separateMesh(scene: THREE.Scene, mesh: THREE.Mesh): THREE.Mesh[]
                   const vertex = vertices[vertexIndex];
                   const uv = uvs[vertexIndex];
                   newVertices.push(vertex.x, vertex.y, vertex.z);
-                  newUvs.push(uv.x, uv.y);
+                  if(uv) newUvs.push(uv.x, uv.y);
               }
               newIndices.push(vertexMapping.get(vertexIndex));
           });

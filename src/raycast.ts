@@ -146,7 +146,7 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
             attachVertexStatus = "SELECT"
             scene.remove(gizmoAttachPoint1)
             scene.remove(gizmoAttachPoint2)
-            const attachResult: boolean = attachVertex()
+            const attachResult: boolean = attachVertex(scene)
             initVertexIndices()
             console.log(`attach result: ${attachResult}`)
           }
