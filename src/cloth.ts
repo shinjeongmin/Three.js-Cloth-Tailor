@@ -10,11 +10,13 @@ import { ConstraintFactory } from "./PBD-simulation/constraint";
  */
 export default class Cloth extends ClothPhysicsObject {
   mesh: Mesh
+  attachIdList: [number, number][] | null
   
   constructor(mesh: Mesh, thickness: number, vertexFix: boolean) {
     super(mesh, thickness)
     this.mesh = mesh
     this.fixVertex(vertexFix)
+    this.attachIdList = null
   }
 
   private fixVertex(vertexFix :boolean) {
@@ -47,7 +49,7 @@ export default class Cloth extends ClothPhysicsObject {
     }
   }
 
-  public updateMesh(mesh: Mesh){
+  public updateMesh(mesh: Mesh, attachIdList: [number,number][] | null = null){
     this.updateTransformMatrix(mesh)
 
     this.numParticles = mesh.geometry.attributes.position.count;
@@ -59,6 +61,7 @@ export default class Cloth extends ClothPhysicsObject {
     this.indices = new Uint16Array(mesh.geometry.index?.array ?? new Array(0));
     this.constraints = [];
     this.collisions = [];
+    this.attachIdList = attachIdList
 
     this.updatePhysics();
 
@@ -66,7 +69,8 @@ export default class Cloth extends ClothPhysicsObject {
       this.positions,
       this.invMass,
       this.indices,
-      this.neighbors
+      this.neighbors,
+      attachIdList
     );
     
     this.mesh = mesh

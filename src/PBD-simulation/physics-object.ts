@@ -48,7 +48,8 @@ export default abstract class PhysicsObject {
       this.positions,
       this.invMass,
       this.indices,
-      this.neighbors
+      this.neighbors,
+      null
     );
   }
 

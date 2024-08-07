@@ -56,16 +56,19 @@ export class ConstraintFactory {
   private invMass: Float32Array;
   private indices: Uint16Array;
   private neighbors: Float32Array;
+  private attachIdList: [number, number][] | null;
   constructor(
     positions: Float32Array,
     invMass: Float32Array,
     indices: Uint16Array,
-    neighbors: Float32Array
+    neighbors: Float32Array,
+    attachIdList: [number, number][] | null
   ) {
     this.positions = positions;
     this.invMass = invMass;
     this.indices = indices;
     this.neighbors = neighbors;
+    this.attachIdList = attachIdList;
   }
 
   createDistanceConstraint(compliance: number) {
@@ -74,7 +77,8 @@ export class ConstraintFactory {
       this.invMass,
       this.indices,
       this.neighbors,
-      compliance
+      compliance,
+      this.attachIdList
     );
   }
 
@@ -111,13 +115,14 @@ export class DistanceConstraint extends Constraint {
     invMass: Float32Array,
     indices: Uint16Array,
     neighbors: Float32Array,
-    compliance: number
+    compliance: number,
+    attachIdList: [number,number][] | null,
   ) {
     super(positions, invMass, indices, neighbors, compliance);
 
     this.edgeIds = this.getEdgeIds();
     this.edgeLengths = new Float32Array(this.edgeIds.length / 2);
-    this.initializeEdgeLengths();
+    this.initializeEdgeLengths(attachIdList);
   }
 
   solve(dt: number) {
@@ -143,13 +148,22 @@ export class DistanceConstraint extends Constraint {
   }
 
   // Calculate and initialize rest lengths of distance constraints
-  private initializeEdgeLengths() {
+  private initializeEdgeLengths(attachIdList: [number,number][] | null) {
     for (let i = 0; i < this.edgeLengths.length; i++) {
       const id0 = this.edgeIds[2 * i];
       const id1 = this.edgeIds[2 * i + 1];
       this.edgeLengths[i] = Math.sqrt(
         vecDistSquared(this.positions, id0, this.positions, id1)
       );
+
+      if(attachIdList){
+        attachIdList.forEach(ids=>{
+          if(id0 === ids[0] && id1 === ids[1] ||
+            id0 === ids[1] && id1 === ids[0]){
+            this.edgeLengths[i] = 0;
+          }
+        })
+      }
     }
   }
 
