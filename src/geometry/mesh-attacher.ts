@@ -22,7 +22,7 @@ export function initVertexIndices(){
 }
 
 // this function is handle case only vertex index 1 by 1.
-export function attachVertex(scene: THREE.Scene): boolean{
+export function attachVertexExpand(scene: THREE.Scene): boolean{
   if (mesh1 === null || mesh2 === null) {
     console.error("Meshes must be set before calling attachVertex.");
     return false;

@@ -6,7 +6,7 @@ import { removeFace } from "./geometry/vertex-remover"
 import { edgeCut } from "./geometry/mesh-edge-cutter"
 import {separateMesh} from "./geometry/mesh-separator"
 import { TransformControls } from "three/examples/jsm/controls/TransformControls"
-import { attachVertex, initVertexIndices, setVertexIndex1, setVertexIndex2 } from './geometry/mesh-attacher'
+import { attachVertexExpand, initVertexIndices, setVertexIndex1, setVertexIndex2 } from './geometry/mesh-attacher'
 
 let raycaster = new THREE.Raycaster()
 const mouse = new THREE.Vector2()
@@ -60,12 +60,14 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
         }
         break;
       case "TRANSFORM": break;
-      case "ATTACH_VERTEX":
+      case "EXPAND_VERTEX":
         if(attachVertexStatus === "SELECT"){
           viewIntersectPoint(scene, camera, "point1")
         }
         else if (attachVertexStatus === "ATTACH") 
           viewIntersectPoint(scene, camera, "point2")
+        break;
+      case "ATTACH_VERTEX":
         break;
       default: break;
     }
@@ -89,7 +91,7 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
         cuttingVertexIndexList = [] // initialize vertex index list
         break;
       case "TRANSFORM": break;
-      case "ATTACH_VERTEX":
+      case "EXPAND_VERTEX":
         clickMesh = getIntersectObject(scene, camera)!
         if(clickMesh !== null) {
           const vertexIndex = getIntersectVertex(scene, camera)[0]
@@ -103,6 +105,8 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
             setVertexIndex2(vertexIndex, clickMesh)
           }
         }
+        break;
+      case "ATTACH_VERTEX":
         break;
       default: 
         attachVertexStatus = "SELECT"
@@ -135,7 +139,7 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
         // separateMesh(clickMesh)
         break;
       case "TRANSFORM": break;
-      case "ATTACH_VERTEX":
+      case "EXPAND_VERTEX":
         clickMesh = getIntersectObject(scene, camera)!
         if(clickMesh !== null) {
           if(attachVertexStatus === "SELECT"){
@@ -146,11 +150,13 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
             attachVertexStatus = "SELECT"
             scene.remove(gizmoAttachPoint1)
             scene.remove(gizmoAttachPoint2)
-            const attachResult: boolean = attachVertex(scene)
+            const attachResult: boolean = attachVertexExpand(scene)
             initVertexIndices()
             console.log(`attach result: ${attachResult}`)
           }
         }
+        break;
+      case "ATTACH_VERTEX":
         break;
       default:
         break;
