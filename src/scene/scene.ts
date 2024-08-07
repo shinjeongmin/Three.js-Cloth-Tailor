@@ -104,7 +104,7 @@ async function init() {
 
   // model load
   //#region cloth object
-  let objPath = 'cloth20x30.obj'
+  let objPath = 'cloth40x40.obj'
   let file = await customOBJLoader.load(objPath)
   cloth = new Cloth(customOBJLoader.parse(file), thickness, true)
   cloth.mesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
@@ -161,7 +161,7 @@ async function update() {
   // selected cloth 
   selectedCloth = cloth // temporary input cloth
   if(mode.curMode === "NONE") gui.updatePositionGuiWithMesh(selectedCloth.mesh)
-  selectedCloth.mesh.geometry.computeBoundingSphere()
+  // selectedCloth.mesh.geometry.computeBoundingSphere()
 
   //TODO: modify to update when event callback
   hierarchy.buildHierarchy(scene)
@@ -194,7 +194,7 @@ function simulationStart(){
     cloth.registerDistanceConstraint(0.0)
     cloth.registerPerformantBendingConstraint(1.0)
     cloth.registerSelfCollision()
-    // cloth.registerIsometricBendingConstraint(10.0)
+    cloth.registerIsometricBendingConstraint(10.0)
   
     // set floor height
     cloth.setFloorHeight(floorHeight)
