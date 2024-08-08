@@ -165,7 +165,7 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
             attachVertexStatus = "SELECT"
             scene.remove(gizmoAttachPoint1)
             scene.remove(gizmoAttachPoint2)
-            attachVertexConstraint()
+            attachVertexConstraint(scene)
             //TODO: black connection gizmo line between vertex index 1 and vertex index 2
             initVertexIndices()
           }

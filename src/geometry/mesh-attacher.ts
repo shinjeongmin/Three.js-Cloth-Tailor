@@ -151,7 +151,7 @@ export function attachVertexExpand(scene: THREE.Scene): boolean{
   }
 }
 
-export function attachVertexConstraint(){
+export function attachVertexConstraint(scene: THREE.Scene){
   if (mesh1 === null || mesh2 === null) {
     console.error("Meshes must be set before calling attachVertex.");
     return;
@@ -173,14 +173,27 @@ export function attachVertexConstraint(){
   // case 1: both mesh is same
   if(mesh1 === mesh2){
     attachIdList.push([vertexIndex1, vertexIndex2]);
-
-    // add new index for attach
-    const addtionalIndex = [vertexIndex1, vertexIndex2, vertexIndex1+1]
-    const newIndex = [...geom1.index.array, ...addtionalIndex]
-    // geom1.setIndex(Array.from(newIndex))
   }
   // case 2: difference mesh -> merge geometry
   else{
-    console.error(`not developed yet!!`)
+    //#region first method 
+
+    const mergedGeom = utils.mergeGeometries([geom1, geom2], false);
+
+    // get index2 after merge
+    const geom1IndexCnt: number = Math.max(...Array.from(geom1.index.array)) + 1
+    const mergedVertexIndex2 = vertexIndex2 + geom1IndexCnt;
+
+    // flush previous geometries
+    geom1.dispose()
+    geom2.dispose()
+
+    attachIdList.push([vertexIndex1, mergedVertexIndex2]);
+
+    // 병합 geometry를 반영하고 남은 mesh 제거
+    mesh1.geometry = mergedGeom
+    scene.remove(mesh2)
+
+    return; 
   }
 }
