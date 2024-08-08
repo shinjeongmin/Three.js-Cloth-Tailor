@@ -382,6 +382,12 @@ export function initTransformControls(transformControls: TransformControls, scen
         if (object) {
           transformControls.attach(object);
         }
+        else if(transformControls.dragging){
+          // nothing
+        }
+        else{ 
+          transformControls.detach();
+        }
         break;
     }
   }, false)
