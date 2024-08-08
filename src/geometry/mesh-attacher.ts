@@ -74,14 +74,6 @@ export function attachVertexExpand(scene: THREE.Scene): boolean{
     geom1.dispose()
     geom2.dispose()
 
-    mesh1.geometry.setAttribute("position", mergedGeom.getAttribute("position"))
-    mesh1.geometry.setAttribute("uv", mergedGeom.getAttribute("uv"))
-    mesh1.geometry.setAttribute("normal", mergedGeom.getAttribute("normal"))
-    mesh1.geometry.setIndex(mergedGeom.index)
-    scene.remove(mesh2)
-
-    return false
-
     // index face list에서 merged vertex index 2에 해당하는 인덱스를 vertex index 1으로 대체 
     if(!mergedGeom.index)
     {
