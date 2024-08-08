@@ -5,6 +5,7 @@ let vertexIndex1: number|null = null;
 let vertexIndex2: number|null = null;
 let mesh1: THREE.Mesh|null = null;
 let mesh2: THREE.Mesh|null = null;
+export let attachIdList: [number, number][] = [];
 
 export function setVertexIndex1(number: number, mesh: THREE.Mesh){
   vertexIndex1 = number
@@ -143,5 +144,40 @@ export function attachVertexExpand(scene: THREE.Scene): boolean{
     return result
     */
     //#endregion
+  }
+}
+
+export function attachVertexConstraint(){
+  if (mesh1 === null || mesh2 === null) {
+    console.error("Meshes must be set before calling attachVertex.");
+    return;
+  }
+  if (vertexIndex1 === null || vertexIndex2 === null) {
+    console.error("Vertex indices must be set before calling attachVertex.");
+    return;
+  }
+
+  const geom1: THREE.BufferGeometry = mesh1.geometry as THREE.BufferGeometry;
+  const geom2: THREE.BufferGeometry = mesh2.geometry as THREE.BufferGeometry;
+
+  if(!geom1.index || !geom2.index)
+  {
+    console.error("geometry index is none.");
+    return;
+  }
+
+  // case 1: both mesh is same
+  if(mesh1 === mesh2){
+    attachIdList.push([vertexIndex1, vertexIndex2]);
+
+    // add new index for attach
+    const addtionalIndex = [vertexIndex1, vertexIndex2, vertexIndex1+1]
+    const newIndex = [...geom1.index.array, ...addtionalIndex]
+    geom1.setIndex(Array.from(newIndex))
+    console.log(geom1)
+  }
+  // case 2: difference mesh -> merge geometry
+  else{
+    console.error(`not developed yet!!`)
   }
 }

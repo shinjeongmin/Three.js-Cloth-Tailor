@@ -6,7 +6,7 @@ import { removeFace } from "./geometry/vertex-remover"
 import { edgeCut } from "./geometry/mesh-edge-cutter"
 import {separateMesh} from "./geometry/mesh-separator"
 import { TransformControls } from "three/examples/jsm/controls/TransformControls"
-import { attachVertexExpand, initVertexIndices, setVertexIndex1, setVertexIndex2 } from './geometry/mesh-attacher'
+import { attachVertexConstraint, attachVertexExpand, initVertexIndices, setVertexIndex1, setVertexIndex2 } from './geometry/mesh-attacher'
 
 let raycaster = new THREE.Raycaster()
 const mouse = new THREE.Vector2()
@@ -61,13 +61,12 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
         break;
       case "TRANSFORM": break;
       case "EXPAND_VERTEX":
+      case "ATTACH_VERTEX":
         if(attachVertexStatus === "SELECT"){
           viewIntersectPoint(scene, camera, "point1")
         }
         else if (attachVertexStatus === "ATTACH") 
           viewIntersectPoint(scene, camera, "point2")
-        break;
-      case "ATTACH_VERTEX":
         break;
       default: break;
     }
@@ -92,6 +91,7 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
         break;
       case "TRANSFORM": break;
       case "EXPAND_VERTEX":
+      case "ATTACH_VERTEX":
         clickMesh = getIntersectObject(scene, camera)!
         if(clickMesh !== null) {
           const vertexIndex = getIntersectVertex(scene, camera)[0]
@@ -105,8 +105,6 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
             setVertexIndex2(vertexIndex, clickMesh)
           }
         }
-        break;
-      case "ATTACH_VERTEX":
         break;
       default: 
         attachVertexStatus = "SELECT"
@@ -157,6 +155,21 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
         }
         break;
       case "ATTACH_VERTEX":
+        clickMesh = getIntersectObject(scene, camera)!
+        if(clickMesh !== null) {
+          if(attachVertexStatus === "SELECT"){
+            attachVertexStatus = "ATTACH"
+          }
+          else if(attachVertexStatus === "ATTACH"){
+            initAttachPointColor(gizmoAttachPoint1, gizmoAttachPoint2)
+            attachVertexStatus = "SELECT"
+            scene.remove(gizmoAttachPoint1)
+            scene.remove(gizmoAttachPoint2)
+            attachVertexConstraint()
+            //TODO: black connection gizmo line between vertex index 1 and vertex index 2
+            initVertexIndices()
+          }
+        }
         break;
       default:
         break;

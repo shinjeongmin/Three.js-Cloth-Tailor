@@ -11,6 +11,7 @@ import * as gui from "../gui/gui"
 import * as raycast from '../raycast'
 import HierarchyUI from '../gui/hierarchy'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
+import { attachIdList } from "../geometry/mesh-attacher"
 
 const CANVAS_ID = 'scene'
 let ambientLight: AmbientLight
@@ -72,7 +73,7 @@ async function init() {
       raycast.initAttachVetexStatus(scene)
       cameraControls.enabled = false
     },
-    "EXPAND_VERTEX"
+    "ATTACH_VERTEX"
   )
 
   // ===== 💡 LIGHTS =====
@@ -190,7 +191,7 @@ function physicsSimulation(clothes: Cloth[]){
 
 function simulationStart(){
   simulClothList.forEach(cloth => {
-    cloth.updateMesh(cloth.mesh)
+    cloth.updateMesh(cloth.mesh, attachIdList)
     cloth.registerDistanceConstraint(0.0)
     cloth.registerPerformantBendingConstraint(1.0)
     cloth.registerSelfCollision()
