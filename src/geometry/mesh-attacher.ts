@@ -70,6 +70,18 @@ export function attachVertexExpand(scene: THREE.Scene): boolean{
     const geom1IndexCnt: number = Math.max(...Array.from(geom1.index.array)) + 1
     const mergedVertexIndex2 = vertexIndex2 + geom1IndexCnt;
 
+    // flush previous geometries
+    geom1.dispose()
+    geom2.dispose()
+
+    mesh1.geometry.setAttribute("position", mergedGeom.getAttribute("position"))
+    mesh1.geometry.setAttribute("uv", mergedGeom.getAttribute("uv"))
+    mesh1.geometry.setAttribute("normal", mergedGeom.getAttribute("normal"))
+    mesh1.geometry.setIndex(mergedGeom.index)
+    scene.remove(mesh2)
+
+    return false
+
     // index face list에서 merged vertex index 2에 해당하는 인덱스를 vertex index 1으로 대체 
     if(!mergedGeom.index)
     {
@@ -173,8 +185,7 @@ export function attachVertexConstraint(){
     // add new index for attach
     const addtionalIndex = [vertexIndex1, vertexIndex2, vertexIndex1+1]
     const newIndex = [...geom1.index.array, ...addtionalIndex]
-    geom1.setIndex(Array.from(newIndex))
-    console.log(geom1)
+    // geom1.setIndex(Array.from(newIndex))
   }
   // case 2: difference mesh -> merge geometry
   else{

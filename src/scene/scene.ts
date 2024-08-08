@@ -105,7 +105,7 @@ async function init() {
 
   // model load
   //#region cloth object
-  let objPath = 'cloth40x40.obj'
+  let objPath = 'cloth20x30.obj'
   let file = await customOBJLoader.load(objPath)
   cloth = new Cloth(customOBJLoader.parse(file), thickness, true)
   cloth.mesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})

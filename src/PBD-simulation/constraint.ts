@@ -120,7 +120,7 @@ export class DistanceConstraint extends Constraint {
   ) {
     super(positions, invMass, indices, neighbors, compliance);
 
-    this.edgeIds = this.getEdgeIds();
+    this.edgeIds = this.getEdgeIds(attachIdList);
     this.edgeLengths = new Float32Array(this.edgeIds.length / 2);
     this.initializeEdgeLengths(attachIdList);
   }
@@ -156,6 +156,7 @@ export class DistanceConstraint extends Constraint {
         vecDistSquared(this.positions, id0, this.positions, id1)
       );
 
+      //#region attach vertex method 1 : based on face index
       if(attachIdList){
         attachIdList.forEach(ids=>{
           if(id0 === ids[0] && id1 === ids[1] ||
@@ -164,11 +165,12 @@ export class DistanceConstraint extends Constraint {
           }
         })
       }
+      //#endregion
     }
   }
 
   // Get edge ids for distance contraints
-  private getEdgeIds(): Uint16Array {
+  private getEdgeIds(attachIdList: [number,number][] | null): Uint16Array {
     const edgeIds = [];
     const numTris = this.indices.length / 3;
     for (let i = 0; i < numTris; i++) {
@@ -184,6 +186,14 @@ export class DistanceConstraint extends Constraint {
           edgeIds.push(id1);
         }
       }
+    }
+
+    // add attach id list
+    if(attachIdList){
+      attachIdList.forEach(ids=>{
+        edgeIds.push(ids[0]);
+        edgeIds.push(ids[1]);
+      })
     }
     return new Uint16Array(edgeIds);
   }
