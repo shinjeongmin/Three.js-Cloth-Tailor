@@ -14,6 +14,7 @@ let target = {
   },
   pickVertexIndex: "",
 }
+export let removeSeparate = {"separate": false};
 
 export function init(){
   gui = new GUI({ title: '🐞 Debug GUI', width: 300 })
@@ -163,4 +164,6 @@ export function changeMode(){
   modeChangeFolder.add({mode: mode.curMode}, 'mode', modeEnumTypes).onChange((val: mode.Mode)=>{
     mode.changeMode(val)
   })
+
+  modeChangeFolder.add(removeSeparate, 'separate').name('separate mesh');
 }

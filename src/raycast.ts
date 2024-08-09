@@ -121,7 +121,7 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
       case "REMOVE_VERTEX":
         scene.remove(gizmoLine)
 
-        if(clickMesh) {
+        if(clickMesh && gui.removeSeparate.separate) {
           inputSimulClothList(separateMesh(scene, clickMesh))
           console.log(`separate after`, scene.children)
         }
