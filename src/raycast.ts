@@ -46,7 +46,7 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
           // remove clicked vertex
           const intersectObject = getIntersectObject(scene, camera)!
           if(intersectObject !== null &&
-            intersectObject !== undefined) {
+            intersectObject !== undefined && intersectObject.name !== 'obstacle') {
             clickMesh = intersectObject!
             const vertexIndex = getIntersectVertex(scene, camera)[0]
             removeFace(clickMesh, vertexIndex)
@@ -81,7 +81,7 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
           
         // remove clicked vertex
         clickMesh = getIntersectObject(scene, camera)!
-        if(clickMesh !== null) {
+        if(clickMesh !== null && clickMesh.name !== 'obstacle') {
           const vertexIndex = getIntersectVertex(scene, camera)[0]
           removeFace(clickMesh, vertexIndex)
         }

@@ -160,7 +160,9 @@ async function init() {
   file = await customOBJLoader.load(objPath)
   collisionMesh = customOBJLoader.parse(file)
   collisionMesh.material = new MeshStandardMaterial({ color: 'skyblue', wireframe: false, side:2})
+  collisionMesh.name = 'obstacle'
   scene.add(collisionMesh)
+
   // collisionMesh.translateY(.5);
   collisionShape = new CANNON.Body({
     mass: 0,
