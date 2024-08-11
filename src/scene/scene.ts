@@ -91,7 +91,7 @@ async function init() {
       raycast.initAttachVetexStatus(scene)
       cameraControls.enabled = false
     },
-    "ATTACH_VERTEX"
+    "NONE"
   )
 
   // ===== 💡 LIGHTS =====
@@ -123,23 +123,24 @@ async function init() {
 
   // model load
   //#region cloth object
-  let objPath = 'cloth20x30.obj'
+  let objPath = 'cloth40x40.obj'
   let file = await customOBJLoader.load(objPath)
-  cloth = new Cloth(customOBJLoader.parse(file), thickness, true)
+  cloth = new Cloth(customOBJLoader.parse(file), thickness, false)
   cloth.mesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
   cloth.mesh.name = 'cloth'
+  cloth.mesh.rotateOnAxis(new Vector3(1,0,0), -1.5)
+  cloth.mesh.translateZ(1)
   //#endregion
 
   //#region cloth onepiece object
   objPath = 'onepiece.obj'
   file = await customOBJLoader.load(objPath)
-  clothOnepiece = new Cloth(customOBJLoader.parse(file), thickness, true)
+  clothOnepiece = new Cloth(customOBJLoader.parse(file), thickness, false)
   clothOnepiece.mesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
   //#endregion
 
   // modify this code to change object model
   scene.add(cloth.mesh)
-  cloth.mesh.translateY(.5)
   simulClothList.push(cloth)
 
   // Transform Controls
@@ -151,6 +152,31 @@ async function init() {
   scene.add(transformControls)
   raycast.initTransformControls(transformControls, scene, camera)
 
+  // physics cannon.js
+  world = new CANNON.World();
+  world.gravity.set(0,-1,0);
+
+  objPath = 'mannequin.obj'
+  file = await customOBJLoader.load(objPath)
+  collisionMesh = customOBJLoader.parse(file)
+  collisionMesh.material = new MeshStandardMaterial({ color: 'skyblue', wireframe: false, side:2})
+  scene.add(collisionMesh)
+  // collisionMesh.translateY(.5);
+  collisionShape = new CANNON.Body({
+    mass: 0,
+    position: new CANNON.Vec3(
+      collisionMesh.position.x,
+      collisionMesh.position.y,
+      collisionMesh.position.z
+    ),
+    shape: new CANNON.Box(new CANNON.Vec3(0.2,0.2,0.2)),
+    material: collisionMaterial
+  })
+  world.addBody(collisionShape)
+
+
+  cloth.setCollisionMesh(collisionMesh)
+  //
 
   // debugger
   gui.init()
