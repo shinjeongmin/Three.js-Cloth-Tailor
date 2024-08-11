@@ -2,7 +2,7 @@
  * XPBD Constraints
  */
 
-import { mat4 } from "gl-matrix";
+import { mat4, vec3 } from "gl-matrix";
 import {
   DataArray,
   multiply4dColumnVectorByTranspose,
@@ -17,6 +17,7 @@ import {
   vecSetDiff,
   vecSetZero,
 } from "./math";
+import * as THREE from 'three'
 
 /**
  * Constraint parent class in which all constraints
@@ -57,18 +58,21 @@ export class ConstraintFactory {
   private indices: Uint16Array;
   private neighbors: Float32Array;
   private attachIdList: [number, number][] | null;
+  private collisionMesh: THREE.Mesh | null;
   constructor(
     positions: Float32Array,
     invMass: Float32Array,
     indices: Uint16Array,
     neighbors: Float32Array,
-    attachIdList: [number, number][] | null
+    attachIdList: [number, number][] | null,
+    collisionMesh: THREE.Mesh | null
   ) {
     this.positions = positions;
     this.invMass = invMass;
     this.indices = indices;
     this.neighbors = neighbors;
     this.attachIdList = attachIdList;
+    this.collisionMesh = collisionMesh;
   }
 
   createDistanceConstraint(compliance: number) {
@@ -78,7 +82,8 @@ export class ConstraintFactory {
       this.indices,
       this.neighbors,
       compliance,
-      this.attachIdList
+      this.attachIdList,
+      this.collisionMesh,
     );
   }
 
@@ -109,6 +114,7 @@ export class ConstraintFactory {
 export class DistanceConstraint extends Constraint {
   edgeIds: Uint16Array;
   edgeLengths: Float32Array;
+  collisionMesh: THREE.Mesh | null;
 
   constructor(
     positions: Float32Array,
@@ -117,12 +123,15 @@ export class DistanceConstraint extends Constraint {
     neighbors: Float32Array,
     compliance: number,
     attachIdList: [number,number][] | null,
+    collisionMesh: THREE.Mesh | null,
   ) {
     super(positions, invMass, indices, neighbors, compliance);
 
     this.edgeIds = this.getEdgeIds(attachIdList);
     this.edgeLengths = new Float32Array(this.edgeIds.length / 2);
     this.initializeEdgeLengths(attachIdList);
+
+    this.collisionMesh = collisionMesh
   }
 
   solve(dt: number) {
@@ -145,6 +154,8 @@ export class DistanceConstraint extends Constraint {
       vecAdd(this.positions, id0, this.grads, 0, s * w0);
       vecAdd(this.positions, id1, this.grads, 0, -s * w1);
     }
+
+    // this.handleCollisions();
   }
 
   // Calculate and initialize rest lengths of distance constraints
@@ -197,6 +208,90 @@ export class DistanceConstraint extends Constraint {
     }
     return new Uint16Array(edgeIds);
   }
+
+  private handleCollisions() {
+    const positions = this.positions;
+    const meshVertices = this.collisionMesh!.geometry.attributes.position.array;
+    const meshIndices = this.collisionMesh!.geometry.index!.array;
+
+    for (let i = 0; i < positions.length / 3; i++) {
+      const particlePosition = vec3.create();
+      vec3.set(particlePosition, positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]);
+
+      for (let j = 0; j < meshIndices.length / 3; j++) {
+        const v0 = vec3.create();
+        const v1 = vec3.create();
+        const v2 = vec3.create();
+        vec3.set(v0, meshVertices[meshIndices[j * 3 + 0] * 3], meshVertices[meshIndices[j * 3 + 0] * 3 + 1], meshVertices[meshIndices[j * 3 + 0] * 3 + 2]);
+        vec3.set(v1, meshVertices[meshIndices[j * 3 + 1] * 3], meshVertices[meshIndices[j * 3 + 1] * 3 + 1], meshVertices[meshIndices[j * 3 + 1] * 3 + 2]);
+        vec3.set(v2, meshVertices[meshIndices[j * 3 + 2] * 3], meshVertices[meshIndices[j * 3 + 2] * 3 + 1], meshVertices[meshIndices[j * 3 + 2] * 3 + 2]);
+
+        // 입자와 삼각형의 충돌 감지
+        const closestPoint = this.closestPointOnTriangle(particlePosition, v0, v1, v2);
+        const distSq = vec3.squaredDistance(particlePosition, closestPoint);
+
+        if (distSq < 0.05) { // this.collisionThreshold
+          // 충돌 처리: 입자를 충돌 평면으로 이동
+          const correction = vec3.subtract(vec3.create(), closestPoint, particlePosition);
+          vec3.scale(correction, correction, this.invMass[i]);
+          vec3.add(particlePosition, particlePosition, correction);
+
+          // 위치 업데이트
+          positions[i * 3 + 0] = particlePosition[0];
+          positions[i * 3 + 1] = particlePosition[1];
+          positions[i * 3 + 2] = particlePosition[2];
+        }
+      }
+    }
+  }  
+
+  // 삼각형 내부에서 입자와 가장 가까운 점을 계산하는 메서드
+  private closestPointOnTriangle(p: vec3, a: vec3, b: vec3, c: vec3): vec3 {
+    // Barycentric 좌표계를 이용해 계산
+    const ab = vec3.subtract(vec3.create(), b, a);
+    const ac = vec3.subtract(vec3.create(), c, a);
+    const ap = vec3.subtract(vec3.create(), p, a);
+
+    const d1 = vec3.dot(ab, ap);
+    const d2 = vec3.dot(ac, ap);
+
+    if (d1 <= 0 && d2 <= 0) return a;
+
+    const bp = vec3.subtract(vec3.create(), p, b);
+    const d3 = vec3.dot(ab, bp);
+    const d4 = vec3.dot(ac, bp);
+
+    if (d3 >= 0 && d4 <= d3) return b;
+
+    const cp = vec3.subtract(vec3.create(), p, c);
+    const d5 = vec3.dot(ab, cp);
+    const d6 = vec3.dot(ac, cp);
+
+    if (d6 >= 0 && d5 <= d6) return c;
+
+    const vc = d1 * d4 - d3 * d2;
+    if (vc <= 0 && d1 >= 0 && d3 <= 0) {
+      const v = d1 / (d1 - d3);
+      return vec3.add(vec3.create(), a, vec3.scale(vec3.create(), ab, v));
+    }
+
+    const vb = d5 * d2 - d1 * d6;
+    if (vb <= 0 && d2 >= 0 && d6 <= 0) {
+      const w = d2 / (d2 - d6);
+      return vec3.add(vec3.create(), a, vec3.scale(vec3.create(), ac, w));
+    }
+
+    const va = d3 * d6 - d5 * d4;
+    if (va <= 0 && (d4 - d3) >= 0 && (d5 - d6) >= 0) {
+      const w = (d4 - d3) / ((d4 - d3) + (d5 - d6));
+      return vec3.add(vec3.create(), b, vec3.scale(vec3.create(), vec3.subtract(vec3.create(), c, b), w));
+    }
+
+    const denom = 1.0 / (va + vb + vc);
+    const v = vb * denom;
+    const w = vc * denom;
+    return vec3.add(vec3.create(), a, vec3.add(vec3.create(), vec3.scale(vec3.create(), ab, v), vec3.scale(vec3.create(), ac, w)));
+  }  
 }
 
 /**
