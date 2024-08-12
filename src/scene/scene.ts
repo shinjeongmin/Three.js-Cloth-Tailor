@@ -12,7 +12,6 @@ import * as raycast from '../raycast'
 import HierarchyUI from '../gui/hierarchy'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
 import { attachIdList } from "../geometry/mesh-attacher"
-import * as CANNON from 'cannon'
 
 const CANVAS_ID = 'scene'
 let ambientLight: AmbientLight
@@ -42,20 +41,7 @@ const gravity = new Float32Array([0, -9.8, 0])
 const floorHeight = -1.5
 
 // collision physics
-let world: CANNON.World
 let collisionMesh: Mesh;
-let collisionShape: CANNON.Body;
-let clothBody: CANNON.Body;
-export const clothMaterial = new CANNON.Material("clothMaterial");
-export const collisionMaterial = new CANNON.Material("collisionMaterial");
-const contactMaterial = new CANNON.ContactMaterial(
-  clothMaterial,
-  collisionMaterial,
-  {
-    friction: 0.4, // 마찰 계수
-    restitution: 0.2, // 반발 계수
-  }
-);
 
 await init()
 update()
@@ -152,32 +138,13 @@ async function init() {
   scene.add(transformControls)
   raycast.initTransformControls(transformControls, scene, camera)
 
-  // physics cannon.js
-  world = new CANNON.World();
-  world.gravity.set(0,-1,0);
-
+  // collision mesh
   objPath = 'mannequin.obj'
   file = await customOBJLoader.load(objPath)
   collisionMesh = customOBJLoader.parse(file)
   collisionMesh.material = new MeshStandardMaterial({ color: 'skyblue', wireframe: false, side:2})
   collisionMesh.name = 'obstacle'
   scene.add(collisionMesh)
-
-  // collisionMesh.translateY(.5);
-  collisionShape = new CANNON.Body({
-    mass: 0,
-    position: new CANNON.Vec3(
-      collisionMesh.position.x,
-      collisionMesh.position.y,
-      collisionMesh.position.z
-    ),
-    shape: new CANNON.Box(new CANNON.Vec3(0.2,0.2,0.2)),
-    material: collisionMaterial
-  })
-  world.addBody(collisionShape)
-
-
-  cloth.setCollisionMesh(collisionMesh)
   //
 
   // debugger
@@ -204,11 +171,6 @@ async function update() {
   }
 
   cameraControls.update()
-
-  // cannonjs
-  collisionMesh.position.copy(collisionShape.position)
-  if(clothBody) cloth.mesh.position.copy(clothBody.position);
-  world.step(1/60)
 
   // selected cloth 
   selectedCloth = cloth // temporary input cloth
@@ -248,20 +210,6 @@ function simulationStart(){
     cloth.registerSelfCollision()
     // cloth.registerExternalCollision(collisionMesh)
     cloth.registerIsometricBendingConstraint(10.0)
-
-    // cannonjs
-    clothBody = new CANNON.Body({
-      mass: 1, // 가벼운 질량 설정
-      position: new CANNON.Vec3(
-        cloth.mesh.position.x,
-        cloth.mesh.position.y,
-        cloth.mesh.position.z,
-      ),
-      shape: new CANNON.Sphere(thickness), // 작은 Sphere로 충돌 감지
-      material: clothMaterial
-    });
-
-    // world.addBody(clothBody);
   
     // set floor height
     cloth.setFloorHeight(floorHeight)

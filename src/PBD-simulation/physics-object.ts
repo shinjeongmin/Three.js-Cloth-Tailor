@@ -12,16 +12,8 @@ import {
   vecSetDiff,
   vecSetZero,
 } from "./math";
-import * as CANNON from 'cannon'
-import { clothMaterial, collisionMaterial } from "../scene/scene";
 
 let height = -0.7
-
-interface CollideEvent {
-  body: CANNON.Body; // 충돌한 상대 Body 객체
-  target: CANNON.Body; // 이벤트가 발생한 Body 객체
-  contact: CANNON.ContactEquation; // 충돌 관련 세부 정보
-}
 
 /**
  * Abstract class that all meshes should inherit from to use XPBD physics
@@ -38,8 +30,6 @@ export default abstract class PhysicsObject {
   constraints: Constraint[];
   constraintFactory: ConstraintFactory;
   collisions: Collision[];
-  world: CANNON.World;
-  collisionBody: CANNON.Body | null;
 
   constructor(mesh: Mesh) {
     this.numParticles = mesh.geometry.attributes.position.count;
@@ -63,56 +53,10 @@ export default abstract class PhysicsObject {
       null,
       null
     );
-
-    this.world = new CANNON.World();
-    this.collisionBody = null;
   }
 
   setFloorHeight(_height:number){
     height = _height
-  }
-
-  createTrimesh(mesh: Mesh) {
-    const vertices = [];
-    const indices = [];
-
-    const geometry = mesh.geometry;
-
-    const positionAttribute = geometry.attributes.position;
-
-    for (let i = 0; i < positionAttribute.count; i++) {
-        const vertex = new Vector3();
-        vertex.fromBufferAttribute(positionAttribute, i);
-        vertices.push(vertex.x, vertex.y, vertex.z);
-    }
-
-    const indexAttribute = geometry.index;
-
-    for (let i = 0; i < indexAttribute!.count; i++) {
-        indices.push(indexAttribute!.getX(i));
-    }
-
-    return new CANNON.Trimesh(vertices, indices);
-  }  
-
-  setCollisionMesh(collisionMesh: Mesh){
-    this.collisionBody = new CANNON.Body({
-      mass: 0, // 고정된 오브젝트로 설정
-      shape: this.createTrimesh(collisionMesh),
-      position: new CANNON.Vec3(
-          collisionMesh.position.x,
-          collisionMesh.position.y,
-          collisionMesh.position.z
-      )
-    });
-    this.world.addBody(this.collisionBody);
-
-    const material = new CANNON.Material("concrete");
-    const contactMaterial = new CANNON.ContactMaterial(material, material, {
-        friction: 0.4,
-        restitution: 0.3
-    });
-    this.world.addContactMaterial(contactMaterial);
   }
 
   solve(dt: number) {    
@@ -299,53 +243,7 @@ export default abstract class PhysicsObject {
   }
 
   preSolve(dt: number, gravity: Float32Array) {
-    // gravity[0] *= 0.5
-    // gravity[1] *= 0.9
-    // gravity[2] *= 0.5
-    for (let i = 0; i < this.numParticles; i++) {
-
-      const shape = new CANNON.Sphere(0.0001);
-      const body = new CANNON.Body({
-          mass: 1,  // 질량
-          shape: shape,
-          material: clothMaterial,
-      });
-      body.position.set(
-        this.positions[3 * i],
-        this.positions[3 * i + 1],
-        this.positions[3 * i + 2]
-      );
-
-      body.addEventListener("collide", (event: CollideEvent)=>{
-        const contact = event.contact;
-        
-        
-        // 현재 위치에서 이전 위치로의 벡터를 계산합니다.
-        const displacement = new Vector3(
-          this.positions[3 * i] - this.prevPositions[3 * i],
-          this.positions[3 * i + 1] - this.prevPositions[3 * i + 1],
-          this.positions[3 * i + 2] - this.prevPositions[3 * i + 2]
-        );
-
-        // 이 벡터의 반대 방향으로 밀어내기 위해 음수 배율을 적용합니다.
-        displacement.multiplyScalar(-1);
-
-        // 파티클의 위치를 반대 방향으로 이동시킵니다.
-        this.positions[3 * i] += displacement.x;
-        this.positions[3 * i + 1] += displacement.y;
-        this.positions[3 * i + 2] += displacement.z;
-
-        // this.invMass[3 * i] = 0.0
-        // this.invMass[3 * i + 1] = 0.0
-        // this.invMass[3 * i + 2] = 0.0
-      });
-
-      // this.world.addBody(body);
-      // this.world.step(1/60);
-
-      const index = this.world.bodies.indexOf(body);
-      if(index !== -1) this.world.bodies.splice(index,1);      
-
+    for (let i = 0; i < this.numParticles; i++) {  
       if (this.invMass[i] == 0.0) continue;
       vecAdd(this.vels, i, gravity, 0, dt);
       const v = Math.sqrt(vecLengthSquared(this.vels, i));
