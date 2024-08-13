@@ -15,7 +15,7 @@ checkPosition(x: number, y: number, z: number): number{
   }
   else if(y < -0.15
     && vecDistSquared([0,0,0],0,[x,0,z],0) < 0.3){
-      resultY = 0;
+      resultY = -0.15;
   }
   else if(y < -0.36
     && vecDistSquared([0,0,0],0,[x,0,z],0) < 0.73
