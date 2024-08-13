@@ -98,7 +98,7 @@ async function init() {
     side: 2,
     transparent: true,
     opacity: 0.4,
-    wireframe: true,
+    wireframe: false,
   })
   const plane = new Mesh(planeGeometry, planeMaterial)
   plane.rotateX(Math.PI / 2)
@@ -142,7 +142,7 @@ async function init() {
   objPath = 'mannequin.obj'
   file = await customOBJLoader.load(objPath)
   collisionMesh = customOBJLoader.parse(file)
-  collisionMesh.material = new MeshStandardMaterial({ color: 'skyblue', wireframe: false, side:2})
+  collisionMesh.material = new MeshStandardMaterial({ color: '#041d27', wireframe: true, side:2})
   collisionMesh.name = 'obstacle'
   scene.add(collisionMesh)
   //

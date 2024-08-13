@@ -12,7 +12,7 @@ import {
   vecSetDiff,
   vecSetZero,
 } from "./math";
-import { checkPosition } from "./checkPosition";
+import { checkPositionNormal, checkPositionY } from "./checkPosition";
 
 let height = -0.7
 
@@ -69,7 +69,16 @@ export default abstract class PhysicsObject {
         this.positions[3 * i + 1] = height;
       }
 
-      this.positions[3 * i + 1] = checkPosition(this.positions[3 * i], this.positions[3 * i + 1], this.positions[3 * i + 2])
+      // method 1
+      // this.positions[3 * i + 1] = checkPositionY(this.positions[3 * i], this.positions[3 * i + 1], this.positions[3 * i + 2])
+      
+      // method 2
+      const adjustPos: [number,number,number] = checkPositionNormal(
+        this.normals[3 * i], this.normals[3 * i + 1], this.normals[3 * i + 2], 
+        this.positions[3 * i], this.positions[3 * i + 1], this.positions[3 * i + 2]);
+      this.positions[3 * i] = adjustPos[0]
+      this.positions[3 * i + 1] = adjustPos[1]
+      this.positions[3 * i + 2] = adjustPos[2]
     }
     for (const constraint of this.constraints) {
       constraint.solve(dt);
