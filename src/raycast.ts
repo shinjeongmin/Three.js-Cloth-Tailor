@@ -73,6 +73,12 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
   }, false)
 
   window.addEventListener('mousedown', (event)=>{
+    // check mouse is on GUI 
+    const elementUnderMouse = document.elementFromPoint(event.x, event.y);
+    if (elementUnderMouse && gui.gui.domElement.contains(elementUnderMouse)) {
+      return;
+    }
+
     switch(mode.curMode){
       case "NONE": break;
       case "RAYCAST": break;
@@ -113,6 +119,12 @@ export function init(scene: THREE.Scene, camera: THREE.Camera, inputSimulClothLi
   }, false)
 
   window.addEventListener('mouseup', (event)=>{
+    // check mouse is on GUI 
+    const elementUnderMouse = document.elementFromPoint(event.x, event.y);
+    if (elementUnderMouse && gui.gui.domElement.contains(elementUnderMouse)) {
+      return;
+    }
+
     switch(mode.curMode){
       case "NONE": break;
       case "RAYCAST":
