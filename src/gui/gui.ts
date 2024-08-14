@@ -165,5 +165,5 @@ export function changeMode(){
     mode.changeMode(val)
   })
 
-  modeChangeFolder.add(removeSeparate, 'separate').name('separate mesh');
+  modeChangeFolder.add(removeSeparate, 'separate').name('REMOVE : separate mesh');
 }
