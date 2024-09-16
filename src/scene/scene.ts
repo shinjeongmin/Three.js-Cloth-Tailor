@@ -1,8 +1,8 @@
-import { AmbientLight, BoxGeometry, BufferAttribute, BufferGeometry, DirectionalLight, Euler, Group, Material, Mesh, MeshBasicMaterial, MeshLambertMaterial, MeshStandardMaterial, PerspectiveCamera, PlaneGeometry, PointLight, RingGeometry, Scene, SphereGeometry, Vector3 } from "three"
+import { AmbientLight, BufferAttribute, DirectionalLight, Mesh, MeshLambertMaterial, MeshStandardMaterial, PerspectiveCamera, PlaneGeometry, PointLight, Vector3 } from "three"
 import { initScene } from "../canvas-window/render-setting"
 import * as controls from '../controls'
 import { resizeRendererToDisplaySize } from "../canvas-window/responsiveness"
-import CustomOBJLoader, { loadOBJ } from '../loader'
+import CustomOBJLoader from '../loader'
 import '../style-sheets/style.css'
 import Cloth from "../cloth"
 import {initInputEvents} from '../managers/input-manager'
@@ -142,7 +142,7 @@ async function init() {
   objPath = 'mannequin.obj'
   file = await customOBJLoader.load(objPath)
   collisionMesh = customOBJLoader.parse(file)
-  collisionMesh.material = new MeshStandardMaterial({ color: '#041d27', wireframe: true, side:2})
+  collisionMesh.material = new MeshStandardMaterial({ color: '#008dc5', wireframe: false, side:2})
   collisionMesh.name = 'obstacle'
   scene.add(collisionMesh)
   //
