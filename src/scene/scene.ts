@@ -49,6 +49,7 @@ update()
 
 async function init() {
   // ===== Managers =====
+  initSkyBox(scene)
   initInputEvents(simulationStart)
   raycast.init(scene, camera, inputSimulClothList)
   mode.init(
@@ -148,7 +149,6 @@ async function init() {
   scene.add(collisionMesh)
   //
 
-  initSkyBox(scene)
   // debugger
   gui.init()
   gui.changeEnvironment(scene)
