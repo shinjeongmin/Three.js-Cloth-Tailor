@@ -1,4 +1,4 @@
-import { AmbientLight, BufferAttribute, CubeTextureLoader, DirectionalLight, Mesh, MeshLambertMaterial, MeshStandardMaterial, PerspectiveCamera, PlaneGeometry, PointLight, Vector3 } from "three"
+import { AmbientLight, BufferAttribute, CubeTextureLoader, DirectionalLight, Mesh, MeshLambertMaterial, MeshStandardMaterial, PerspectiveCamera, PlaneGeometry, PointLight, TextureLoader, Vector3 } from "three"
 import { initScene } from "../canvas-window/render-setting"
 import * as controls from '../controls'
 import { resizeRendererToDisplaySize } from "../canvas-window/responsiveness"
@@ -13,6 +13,7 @@ import HierarchyUI from '../gui/hierarchy'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
 import { attachIdList } from "../geometry/mesh-attacher"
 import { initSkyBox } from "./skybox"
+import { randInt } from "three/src/math/MathUtils"
 
 const CANVAS_ID = 'scene'
 let ambientLight: AmbientLight
@@ -26,6 +27,7 @@ const camera = new PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeigh
 camera.position.set(-2, 2.5, 1.5)
 const { cameraControls } = controls.setCameraControl(camera, canvas)
 const hierarchy =  new HierarchyUI()
+const textureLoader = new TextureLoader();
 
 let cloth: Cloth
 let clothOnepiece: Cloth
@@ -84,9 +86,9 @@ async function init() {
 
   // ===== 💡 LIGHTS =====
   {
-    ambientLight = new AmbientLight('white', 0.4)
+    ambientLight = new AmbientLight('white', 1.4)
     scene.add(ambientLight)
-    directionalLight = new DirectionalLight('white', 0.5)
+    directionalLight = new DirectionalLight('white', 1.5)
     scene.add(directionalLight)
     pointLight = new PointLight('white', 0.1)
     scene.add(pointLight)
@@ -114,7 +116,7 @@ async function init() {
   let objPath = 'cloth40x40.obj'
   let file = await customOBJLoader.load(objPath)
   cloth = new Cloth(customOBJLoader.parse(file), thickness, false)
-  cloth.mesh.material = new MeshStandardMaterial({ color: 'red', wireframe: false, side:2})
+  cloth.mesh.material = new MeshStandardMaterial({ /*color: 'red',*/ wireframe: false, side:2})
   cloth.mesh.name = 'cloth'
   cloth.mesh.rotateOnAxis(new Vector3(1,0,0), -1.5)
   cloth.mesh.translateZ(1)
@@ -144,10 +146,45 @@ async function init() {
   objPath = 'mannequin.obj'
   file = await customOBJLoader.load(objPath)
   collisionMesh = customOBJLoader.parse(file)
-  collisionMesh.material = new MeshStandardMaterial({ color: '#008dc5', wireframe: false, side:2})
+  collisionMesh.material = new MeshStandardMaterial({ /* color: '#008dc5', */ wireframe: false, side:2})
   collisionMesh.name = 'obstacle'
   scene.add(collisionMesh)
   //
+
+  // ===== 🧱 TEXTURES =====
+  collisionMesh.material; // mannequin
+  cloth.mesh.material; // cloth
+
+  let texIdx1 = randInt(1,4);
+  let texIdx2 = randInt(1,4);
+  // // combination1
+  // texIdx1 = 1
+  // texIdx2 = 3
+  // // combination2
+  // texIdx1 = 4
+  // texIdx2 = 2
+
+  const clothTex = textureLoader.load(`../../public/texture/${texIdx1}/Color.png`);
+  const clothTexNormal = textureLoader.load(`../../public/texture/${texIdx1}/Normal.png`);
+  const clothTexMetalness = textureLoader.load(`../../public/texture/${texIdx1}/Metalness.png`);
+  const clothTexRoughness = textureLoader.load(`../../public/texture/${texIdx1}/Roughness.png`);
+  const clothTexAO = textureLoader.load(`../../public/texture/${texIdx1}/AmbientOcclusion.png`);
+  (cloth.mesh.material as MeshStandardMaterial).map = clothTex;
+  (cloth.mesh.material as MeshStandardMaterial).map = clothTex;
+  (cloth.mesh.material as MeshStandardMaterial).normalMap = clothTexNormal;
+  (cloth.mesh.material as MeshStandardMaterial).metalnessMap = clothTexMetalness;
+  (cloth.mesh.material as MeshStandardMaterial).roughnessMap = clothTexRoughness;
+  (cloth.mesh.material as MeshStandardMaterial).aoMap = clothTexAO;
+  const mannequinTex = textureLoader.load(`../../public/texture/${texIdx2}/Color.png`);
+  const mannequinTexNormal = textureLoader.load(`../../public/texture/${texIdx2}/Normal.png`);
+  const mannequinTexMetalness = textureLoader.load(`../../public/texture/${texIdx2}/Metalness.png`);
+  const mannequinTexRoughness = textureLoader.load(`../../public/texture/${texIdx2}/Roughness.png`);
+  const mannequinTexAO = textureLoader.load(`../../public/texture/${texIdx2}/AmbientOcclusion.png`);
+  (collisionMesh.material as MeshStandardMaterial).map = mannequinTex;
+  (collisionMesh.material as MeshStandardMaterial).normalMap = mannequinTexNormal;
+  (collisionMesh.material as MeshStandardMaterial).metalnessMap = mannequinTexMetalness;
+  (collisionMesh.material as MeshStandardMaterial).roughnessMap = mannequinTexRoughness;
+  (collisionMesh.material as MeshStandardMaterial).aoMap = mannequinTexAO;
 
   // debugger
   gui.init()
