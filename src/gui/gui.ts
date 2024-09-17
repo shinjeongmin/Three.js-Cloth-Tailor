@@ -2,6 +2,7 @@ import GUI from 'lil-gui'
 import { AmbientLight, AxesHelper, BufferGeometry, GridHelper, Mesh, MeshBasicMaterial, PointLight, PointLightHelper, Scene, SphereGeometry, Vector3 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import * as mode from '../managers/mode-manager'
+import { changeSkyBox, skyboxType, SKYBOX } from '../scene/skybox'
 
 export let gui: GUI
 let target = {
@@ -166,4 +167,12 @@ export function changeMode(){
   })
 
   modeChangeFolder.add(removeSeparate, 'separate').name('REMOVE : separate mesh');
+}
+
+export function changeEnvironment(scene: Scene){
+  const environmentsFolder = gui.addFolder('environments')
+
+  environmentsFolder.add({environments: skyboxType[0]}, 'environments', skyboxType).onChange((val: SKYBOX)=>{
+    changeSkyBox(scene, val)
+  })
 }
