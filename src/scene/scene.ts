@@ -1,4 +1,4 @@
-import { AmbientLight, BufferAttribute, DirectionalLight, Mesh, MeshLambertMaterial, MeshStandardMaterial, PerspectiveCamera, PlaneGeometry, PointLight, Vector3 } from "three"
+import { AmbientLight, BufferAttribute, CubeTextureLoader, DirectionalLight, Mesh, MeshLambertMaterial, MeshStandardMaterial, PerspectiveCamera, PlaneGeometry, PointLight, Vector3 } from "three"
 import { initScene } from "../canvas-window/render-setting"
 import * as controls from '../controls'
 import { resizeRendererToDisplaySize } from "../canvas-window/responsiveness"
@@ -12,6 +12,20 @@ import * as raycast from '../raycast'
 import HierarchyUI from '../gui/hierarchy'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
 import { attachIdList } from "../geometry/mesh-attacher"
+const textureLoader = new CubeTextureLoader()
+textureLoader.load(
+  [
+    '../../public/skybox/clothing-store1/0.png', // 앞면
+    '../../public/skybox/clothing-store1/1.png', // 뒷면
+    '../../public/skybox/clothing-store1/2.png', // 위
+    '../../public/skybox/clothing-store1/3.png', // 아래
+    '../../public/skybox/clothing-store1/4.png', // 오른쪽
+    '../../public/skybox/clothing-store1/5.png', // 왼쪽
+  ],
+  (texture)=>{
+    scene.background = texture;
+  }
+)
 
 const CANVAS_ID = 'scene'
 let ambientLight: AmbientLight
