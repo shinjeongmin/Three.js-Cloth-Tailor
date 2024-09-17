@@ -118,7 +118,7 @@ async function init() {
   cloth = new Cloth(customOBJLoader.parse(file), thickness, false)
   cloth.mesh.material = new MeshStandardMaterial({ /*color: 'red',*/ wireframe: false, side:2})
   cloth.mesh.name = 'cloth'
-  cloth.mesh.rotateOnAxis(new Vector3(1,0,0), -1.5)
+  cloth.mesh.rotateOnAxis(new Vector3(1,0,0), -1.57)
   cloth.mesh.translateZ(1)
   //#endregion
 
