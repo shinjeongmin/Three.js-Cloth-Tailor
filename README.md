@@ -1,24 +1,51 @@
 # Three.js Cloth Tailor
+<p style="display: flex; flex-wrap: wrap; gap: 0px; justify-content: space-around;">
+  <img src="./docs/cloth_tailor_attach_drop_1.png" width="45%" />
+  <img src="./docs/cloth_tailor_drop_1.png" width="45%" />
+  <img src="./docs/cloth_tailor_attach_drop_2.png" width="45%" />
+  <img src="./docs/cloth_tailor_drop_2.png" width="45%" />
+  <img src="./docs/cloth_tailor_attach_drop_3.png" width="45%" />
+  <img src="./docs/cloth_tailor_drop_3.png" width="45%" />
+</p>
 
 ## Physical Based Dynamics simulation
-![PBD simulation](readme-image/cloth-pbd-simulation.gif)
+![PBD simulation](docs/cloth-pbd-simulation.gif)
 
 ## Remove vertex mode
-![Remove Vertex Mode](readme-image/cloth-remove-vertex.gif)
+![Remove Vertex Mode](docs/cloth-remove-vertex.gif)
 
 ## Remove edge(Cut along with edge) mode
-![Remove Edge Mode](readme-image/cloth-remove-edge.gif)
+![Remove Edge Mode](docs/cloth-remove-edge.gif)
 
 ## Expand vertex mode
+<p style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-around;">
+  <img src="./docs/expandVertex1.gif" width="45%" />
+  <img src="./docs/expandVertex2.gif" width="45%" />
+  <img src="./docs/expandVertex3.gif" width="45%" />
+  <img src="./docs/expandVertex4.gif" width="45%" />
+</p>
 
 ## Attach vertex mode
+<p style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-around;">
+  <img src="./docs/attachVertex3.gif" width="45%" />
+  <img src="./docs/attachVertex4.gif" width="45%" />
+  <img src="./docs/attachVertex1.gif" width="45%" />
+  <img src="./docs/attachVertex2.gif" width="45%" />
+</p>
 
-## Transform GUI
-
-## Cut geometry divide mesh
+## Transform GUI & Cut geometry divide mesh
+![transformGUI](docs/transformGUI1.gif)
 
 ## Virtual cloth drape
-
+<p style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-around;">
+  <img src="./docs/attachOverMannequin1.gif" width="45%" />
+  <img src="./docs/removeVertexAttachOverMannequin2.gif" width="45%" />
+  <img src="./docs/attachOverMannequin3.gif" width="45%" />
+  <img src="./docs/removeVertexOverMannequin1.gif" width="45%" />
+  <img src="./docs/attachOverMannequin2.gif" width="30%" />
+  <img src="./docs/removeVertexAttachOverMannequin1.gif" width="30%" />
+  <img src="./docs/removeVertexOverMannequin2.gif" width="30%" />
+</p>
 
 # How to Run
 ## Tech Stack
