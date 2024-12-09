@@ -1,4 +1,5 @@
 # Three.js Cloth Tailor
+### gif 파일이 많아, 로딩 시간이 오래 걸릴 수 있습니다. / There are many gif files, so it may take a long time to load.
 <p style="display: flex; flex-wrap: wrap; gap: 0px; justify-content: space-around;">
   <img src="./docs/cloth_tailor_attach_drop_1.png" width="45%" />
   <img src="./docs/cloth_tailor_drop_1.png" width="45%" />
